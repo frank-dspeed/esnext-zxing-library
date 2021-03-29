@@ -46,11 +46,12 @@ jobs:
           wget -qO- https://github.com/frank-dspeed/esnext-adriengibrat-ts-custom-error/archive/refs/heads/main.tar.gz | tar -xvz
           mv esnext-adriengibrat-ts-custom-error-main/dist dist/esnext/ts-custom-error         
           rm -rf esnext-adriengibrat-ts-custom-error-main
+          cp ../Exception.d.ts dist/esnext/core
           cp ../Exception.js dist/esnext/core
           
           cp ../package.json dist/esnext
-          mv dist/esnext ../dist
-          
+          rm -rf ../dist/*
+          mv dist/esnext/ ../dist
           ls -ahl ../dist
           cd ..
           git add dist
