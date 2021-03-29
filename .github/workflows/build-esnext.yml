@@ -1,0 +1,52 @@
+name: CI-release-zxing-esnext
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the main branch
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '10 */15 * * *'
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Setup node 15
+        uses: actions/setup-node@v1
+        with:
+          node-version: 15.x
+      - name: Download https://github.com/zxing-js/library
+        id: src
+        env:
+          SUPER_SECRET: ${{ secrets.PAT }}
+        run: |
+          echo "export WORKING_DIR=$PWD" > .env && source .env
+          echo "library" >> .gitignore
+          git add .env
+          echo "export MASTER_COMMIT=$(curl --silent -L https://api.github.com/repos/zxing-js/library/commits/master | jq .sha | xargs)" >> .env && source .env
+          echo zxing-esnext-$(git rev-parse --short $MASTER_COMMIT) > CURRENT_VERSION
+          git add CURRENT_VERSION
+          ## This is Expected to fail if there is nothing to Commit Clever?
+          git config --global user.email "frank@dspeed.eu"
+          git config --global user.name "Frank Lemanschik"
+          git commit -m "Updated Version $MASTER_COMMIT" || exit 0
+          git clone https://github.com/zxing-js/library
+          cd library
+          npm ci
+          cp ../tsconfig.lib-esnext.json .
+          /node_modules/.bin/tsc --build tsconfig.lib-esnext.json
+          mv dist/esnext ../dist
+          ls -ahl 
+          ## Lets Exit for first test
+          exit 1
+          echo "::set-output name=releasename::Release $(cat CURRENT_VERSION)"
+          git push https://frank-dspeed:$SUPER_SECRET@github.com/frank-dspeed/zxing-esnext
+
+
