@@ -56,7 +56,7 @@ jobs:
           mv dist/esnext ../dist
           ls -ahl ../dist
           cd ..
-          ./node_modules/.bin/eslint --fix dist
+          ./library/node_modules/.bin/eslint --fix dist
           git add dist
           git commit -m "Updated /dist $MASTER_COMMIT" || exit 0
           ## Lets Exit for first test
