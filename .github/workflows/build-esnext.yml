@@ -43,8 +43,10 @@ jobs:
           cp ../tsconfig.lib-esnext.json .
           
           ./node_modules/.bin/tsc --build tsconfig.lib-esnext.json
+          
+          echo "Replacing Patched Dependency ts-custom-error"
           wget -qO- https://github.com/frank-dspeed/esnext-adriengibrat-ts-custom-error/archive/refs/heads/main.tar.gz | tar -xvz
-          mv esnext-adriengibrat-ts-custom-error-main/dist dist/esnext/ts-custom-error         
+          mv esnext-adriengibrat-ts-custom-error-main/dist dist/esnext/core/ts-custom-error         
           rm -rf esnext-adriengibrat-ts-custom-error-main
           cp ../Exception.d.ts dist/esnext/core
           cp ../Exception.js dist/esnext/core
