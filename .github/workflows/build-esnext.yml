@@ -41,7 +41,7 @@ jobs:
           cd library
           yarn install --frozen-lockfile
           cp ../tsconfig.lib-esnext.json .
-          /node_modules/.bin/tsc --build tsconfig.lib-esnext.json
+          ./node_modules/.bin/tsc --build tsconfig.lib-esnext.json
           mv dist/esnext ../dist
           ls -ahl 
           ## Lets Exit for first test
