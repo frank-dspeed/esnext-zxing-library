@@ -1,4 +1,4 @@
-import { CustomError } from 'ts-custom-error';
+import { CustomError } from './ts-custom-error/custom-error';
 /**
  * Custom Error class of type Exception.
  */
