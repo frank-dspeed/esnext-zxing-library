@@ -46,7 +46,8 @@ jobs:
           cp ../package.json dist/esnext
           mv dist/esnext ../dist
           ls -ahl ../dist
-          git add ../dist
+          cd ..
+          git add dist
           git commit -m "Updated /dist $MASTER_COMMIT" || exit 0
           ## Lets Exit for first test
           echo "::set-output name=releasename::Release $(cat CURRENT_VERSION)"
