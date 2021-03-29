@@ -39,7 +39,7 @@ jobs:
           git commit -m "Updated Version $MASTER_COMMIT" || exit 0
           git clone https://github.com/zxing-js/library
           cd library
-          npm ci
+          yarn install --frozen-lockfile
           cp ../tsconfig.lib-esnext.json .
           /node_modules/.bin/tsc --build tsconfig.lib-esnext.json
           mv dist/esnext ../dist
