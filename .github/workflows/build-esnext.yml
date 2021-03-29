@@ -43,7 +43,7 @@ jobs:
           cp ../tsconfig.lib-esnext.json .
           ./node_modules/.bin/tsc --build tsconfig.lib-esnext.json
           mv dist/esnext ../dist
-          ls -ahl 
+          ls -ahl ../dist
           ## Lets Exit for first test
           exit 1
           echo "::set-output name=releasename::Release $(cat CURRENT_VERSION)"
