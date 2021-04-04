@@ -5,13 +5,13 @@ export default class AI01decoder extends AbstractExpandedDecoder {
     }
     encodeCompressedGtin(buf, currentPos) {
         buf.append('(01)');
-        let initialPosition = buf.length();
+        const initialPosition = buf.length();
         buf.append('9');
         this.encodeCompressedGtinWithoutAI(buf, currentPos, initialPosition);
     }
     encodeCompressedGtinWithoutAI(buf, currentPos, initialBufferPosition) {
         for (let i = 0; i < 4; ++i) {
-            let currentBlock = this.getGeneralDecoder().extractNumericValueFromBitArray(currentPos + 10 * i, 10);
+            const currentBlock = this.getGeneralDecoder().extractNumericValueFromBitArray(currentPos + 10 * i, 10);
             if (currentBlock / 100 === 0) {
                 buf.append('0');
             }
@@ -27,7 +27,7 @@ export default class AI01decoder extends AbstractExpandedDecoder {
         for (let i = 0; i < 13; i++) {
             // let digit = buf.charAt(i + currentPos) - '0';
             // To be checked
-            let digit = buf.charAt(i + currentPos).charCodeAt(0) - '0'.charCodeAt(0);
+            const digit = buf.charAt(i + currentPos).charCodeAt(0) - '0'.charCodeAt(0);
             checkDigit += (i & 0x01) === 0 ? 3 * digit : digit;
         }
         checkDigit = 10 - (checkDigit % 10);

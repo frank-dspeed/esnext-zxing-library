@@ -54,9 +54,9 @@ export default class UPCAReader extends UPCEANReader {
         return this.ean13Reader.decodeMiddle(row, startRange, resultString);
     }
     maybeReturnResult(result) {
-        let text = result.getText();
+        const text = result.getText();
         if (text.charAt(0) === '0') {
-            let upcaResult = new Result(text.substring(1), null, null, result.getResultPoints(), BarcodeFormat.UPC_A);
+            const upcaResult = new Result(text.substring(1), null, null, result.getResultPoints(), BarcodeFormat.UPC_A);
             if (result.getResultMetadata() != null) {
                 upcaResult.putAllMetadata(result.getResultMetadata());
             }

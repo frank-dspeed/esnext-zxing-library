@@ -46,9 +46,9 @@ export default class AbstractUPCEANReader extends OneDReader {
         while (!foundStart) {
             counters = Int32Array.from([0, 0, 0]);
             startRange = AbstractUPCEANReader.findGuardPattern(row, nextStart, false, this.START_END_PATTERN, counters);
-            let start = startRange[0];
+            const start = startRange[0];
             nextStart = startRange[1];
-            let quietStart = start - (nextStart - start);
+            const quietStart = start - (nextStart - start);
             if (quietStart >= 0) {
                 foundStart = row.isRange(quietStart, start, false);
             }
@@ -59,17 +59,17 @@ export default class AbstractUPCEANReader extends OneDReader {
         return AbstractUPCEANReader.checkStandardUPCEANChecksum(s);
     }
     static checkStandardUPCEANChecksum(s) {
-        let length = s.length;
+        const length = s.length;
         if (length === 0)
-            return false;
-        let check = parseInt(s.charAt(length - 1), 10);
+            {return false;}
+        const check = parseInt(s.charAt(length - 1), 10);
         return AbstractUPCEANReader.getStandardUPCEANChecksum(s.substring(0, length - 1)) === check;
     }
     static getStandardUPCEANChecksum(s) {
-        let length = s.length;
+        const length = s.length;
         let sum = 0;
         for (let i = length - 1; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+            const digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
                 throw new FormatException();
             }
@@ -77,7 +77,7 @@ export default class AbstractUPCEANReader extends OneDReader {
         }
         sum *= 3;
         for (let i = length - 2; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+            const digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
                 throw new FormatException();
             }
@@ -106,11 +106,11 @@ export default class AbstractUPCEANReader extends OneDReader {
      * @throws NotFoundException if pattern is not found
      */
     static findGuardPattern(row, rowOffset, whiteFirst, pattern, counters) {
-        let width = row.getSize();
+        const width = row.getSize();
         rowOffset = whiteFirst ? row.getNextUnset(rowOffset) : row.getNextSet(rowOffset);
         let counterPosition = 0;
         let patternStart = rowOffset;
-        let patternLength = pattern.length;
+        const patternLength = pattern.length;
         let isWhite = whiteFirst;
         for (let x = rowOffset; x < width; x++) {
             if (row.get(x) !== isWhite) {
@@ -122,7 +122,7 @@ export default class AbstractUPCEANReader extends OneDReader {
                         return Int32Array.from([patternStart, x]);
                     }
                     patternStart += counters[0] + counters[1];
-                    let slice = counters.slice(2, counters.length - 1);
+                    const slice = counters.slice(2, counters.length - 1);
                     for (let i = 0; i < counterPosition - 1; i++) {
                         counters[i] = slice[i];
                     }
@@ -143,10 +143,10 @@ export default class AbstractUPCEANReader extends OneDReader {
         this.recordPattern(row, rowOffset, counters);
         let bestVariance = this.MAX_AVG_VARIANCE;
         let bestMatch = -1;
-        let max = patterns.length;
+        const max = patterns.length;
         for (let i = 0; i < max; i++) {
-            let pattern = patterns[i];
-            let variance = OneDReader.patternMatchVariance(counters, pattern, AbstractUPCEANReader.MAX_INDIVIDUAL_VARIANCE);
+            const pattern = patterns[i];
+            const variance = OneDReader.patternMatchVariance(counters, pattern, AbstractUPCEANReader.MAX_INDIVIDUAL_VARIANCE);
             if (variance < bestVariance) {
                 bestVariance = variance;
                 bestMatch = i;

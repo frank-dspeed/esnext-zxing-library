@@ -210,7 +210,7 @@ export default class Encoder {
         // We try all mask patterns to choose the best one.
         for (let maskPattern = 0; maskPattern < QRCode.NUM_MASK_PATTERNS; maskPattern++) {
             MatrixUtil.buildMatrix(bits, ecLevel, version, maskPattern, matrix);
-            let penalty = this.calculateMaskPenalty(matrix);
+            const penalty = this.calculateMaskPenalty(matrix);
             if (penalty < minPenalty) {
                 minPenalty = penalty;
                 bestMaskPattern = maskPattern;

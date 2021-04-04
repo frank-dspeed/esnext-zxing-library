@@ -18,15 +18,15 @@ import UPCEANExtension5Support from './UPCEANExtension5Support';
 import UPCEANExtension2Support from './UPCEANExtension2Support';
 export default class UPCEANExtensionSupport {
     static decodeRow(rowNumber, row, rowOffset) {
-        let extensionStartRange = AbstractUPCEANReader.findGuardPattern(row, rowOffset, false, this.EXTENSION_START_PATTERN, new Int32Array(this.EXTENSION_START_PATTERN.length).fill(0));
+        const extensionStartRange = AbstractUPCEANReader.findGuardPattern(row, rowOffset, false, this.EXTENSION_START_PATTERN, new Int32Array(this.EXTENSION_START_PATTERN.length).fill(0));
         try {
             // return null;
-            let fiveSupport = new UPCEANExtension5Support();
+            const fiveSupport = new UPCEANExtension5Support();
             return fiveSupport.decodeRow(rowNumber, row, extensionStartRange);
         }
         catch (err) {
             // return null;
-            let twoSupport = new UPCEANExtension2Support();
+            const twoSupport = new UPCEANExtension2Support();
             return twoSupport.decodeRow(rowNumber, row, extensionStartRange);
         }
     }

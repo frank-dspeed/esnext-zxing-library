@@ -23,7 +23,7 @@
  * @author dswitkin@google.com (Daniel Switkin)
  * @see Reader#decode(BinaryBitmap,java.util.Map)
  */
-var DecodeHintType;
+let DecodeHintType;
 (function (DecodeHintType) {
     /**
      * Unspecified, application-specific hint. Maps to an unspecified {@link Object}.

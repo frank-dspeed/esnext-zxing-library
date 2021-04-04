@@ -103,7 +103,7 @@ export default class QRCodeReader {
         }
         const moduleSize = this.moduleSize(leftTopBlack, image);
         let top = leftTopBlack[1];
-        let bottom = rightBottomBlack[1];
+        const bottom = rightBottomBlack[1];
         let left = leftTopBlack[0];
         let right = rightBottomBlack[0];
         // Sanity check!

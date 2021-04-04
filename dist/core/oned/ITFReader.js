@@ -46,11 +46,11 @@ export default class ITFReader extends OneDReader {
     */
     decodeRow(rowNumber, row, hints) {
         // Find out where the Middle section (payload) starts & ends
-        let startRange = this.decodeStart(row);
-        let endRange = this.decodeEnd(row);
-        let result = new StringBuilder();
+        const startRange = this.decodeStart(row);
+        const endRange = this.decodeEnd(row);
+        const result = new StringBuilder();
         ITFReader.decodeMiddle(row, startRange[1], endRange[0], result);
-        let resultString = result.toString();
+        const resultString = result.toString();
         let allowedLengths = null;
         if (hints != null) {
             allowedLengths = hints.get(DecodeHintType.ALLOWED_LENGTHS);
@@ -60,10 +60,10 @@ export default class ITFReader extends OneDReader {
         }
         // To avoid false positives with 2D barcodes (and other patterns), make
         // an assumption that the decoded string must be a 'standard' length if it's short
-        let length = resultString.length;
+        const length = resultString.length;
         let lengthOK = false;
         let maxAllowedLength = 0;
-        for (let value of allowedLengths) {
+        for (const value of allowedLengths) {
             if (length === value) {
                 lengthOK = true;
                 break;
@@ -79,7 +79,7 @@ export default class ITFReader extends OneDReader {
             throw new FormatException();
         }
         const points = [new ResultPoint(startRange[1], rowNumber), new ResultPoint(endRange[0], rowNumber)];
-        let resultReturn = new Result(resultString, null, // no natural byte representation for these barcodes
+        const resultReturn = new Result(resultString, null, // no natural byte representation for these barcodes
         0, points, BarcodeFormat.ITF, new Date().getTime());
         return resultReturn;
     }
@@ -96,9 +96,9 @@ export default class ITFReader extends OneDReader {
         // interleaved white lines for the second digit.
         // Therefore, need to scan 10 lines and then
         // split these into two arrays
-        let counterDigitPair = new Int32Array(10); // 10
-        let counterBlack = new Int32Array(5); // 5
-        let counterWhite = new Int32Array(5); // 5
+        const counterDigitPair = new Int32Array(10); // 10
+        const counterBlack = new Int32Array(5); // 5
+        const counterWhite = new Int32Array(5); // 5
         counterDigitPair.fill(0);
         counterBlack.fill(0);
         counterWhite.fill(0);
@@ -107,7 +107,7 @@ export default class ITFReader extends OneDReader {
             OneDReader.recordPattern(row, payloadStart, counterDigitPair);
             // Split them into each array
             for (let k = 0; k < 5; k++) {
-                let twoK = 2 * k;
+                const twoK = 2 * k;
                 counterBlack[k] = counterDigitPair[twoK];
                 counterWhite[k] = counterDigitPair[twoK + 1];
             }
@@ -115,7 +115,7 @@ export default class ITFReader extends OneDReader {
             resultString.append(bestMatch.toString());
             bestMatch = this.decodeDigit(counterWhite);
             resultString.append(bestMatch.toString());
-            counterDigitPair.forEach(function (counterDigit) {
+            counterDigitPair.forEach((counterDigit) => {
                 payloadStart += counterDigit;
             });
         }
@@ -128,8 +128,8 @@ export default class ITFReader extends OneDReader {
      *         'start block'
      *!/*/
     decodeStart(row) {
-        let endStart = ITFReader.skipWhiteSpace(row);
-        let startPattern = ITFReader.findGuardPattern(row, endStart, ITFReader.START_PATTERN);
+        const endStart = ITFReader.skipWhiteSpace(row);
+        const startPattern = ITFReader.findGuardPattern(row, endStart, ITFReader.START_PATTERN);
         // Determine the width of a narrow line in pixels. We can do this by
         // getting the width of the start pattern and dividing by 4 because its
         // made up of 4 narrow lines.
@@ -195,7 +195,7 @@ export default class ITFReader extends OneDReader {
         // search from 'the start' for the end block
         row.reverse();
         try {
-            let endStart = ITFReader.skipWhiteSpace(row);
+            const endStart = ITFReader.skipWhiteSpace(row);
             let endPattern;
             try {
                 endPattern = ITFReader.findGuardPattern(row, endStart, ITFReader.END_PATTERN_REVERSED[0]);
@@ -212,7 +212,7 @@ export default class ITFReader extends OneDReader {
             // Now recalculate the indices of where the 'endblock' starts & stops to
             // accommodate
             // the reversed nature of the search
-            let temp = endPattern[0];
+            const temp = endPattern[0];
             endPattern[0] = row.getSize() - endPattern[1];
             endPattern[1] = row.getSize() - temp;
             return endPattern;
@@ -233,9 +233,9 @@ export default class ITFReader extends OneDReader {
      * @throws NotFoundException if pattern is not found
      *!/*/
     static findGuardPattern(row, rowOffset, pattern) {
-        let patternLength = pattern.length;
-        let counters = new Int32Array(patternLength);
-        let width = row.getSize();
+        const patternLength = pattern.length;
+        const counters = new Int32Array(patternLength);
+        const width = row.getSize();
         let isWhite = false;
         let counterPosition = 0;
         let patternStart = rowOffset;
@@ -275,10 +275,10 @@ export default class ITFReader extends OneDReader {
     static decodeDigit(counters) {
         let bestVariance = ITFReader.MAX_AVG_VARIANCE; // worst variance we'll accept
         let bestMatch = -1;
-        let max = ITFReader.PATTERNS.length;
+        const max = ITFReader.PATTERNS.length;
         for (let i = 0; i < max; i++) {
-            let pattern = ITFReader.PATTERNS[i];
-            let variance = OneDReader.patternMatchVariance(counters, pattern, ITFReader.MAX_INDIVIDUAL_VARIANCE);
+            const pattern = ITFReader.PATTERNS[i];
+            const variance = OneDReader.patternMatchVariance(counters, pattern, ITFReader.MAX_INDIVIDUAL_VARIANCE);
             if (variance < bestVariance) {
                 bestVariance = variance;
                 bestMatch = i;

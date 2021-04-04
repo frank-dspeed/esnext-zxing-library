@@ -48,7 +48,7 @@ export default class Decoder {
         const dataBlocks = DataBlock.getDataBlocks(codewords, version);
         // Count total number of data bytes
         let totalBytes = 0;
-        for (let db of dataBlocks) {
+        for (const db of dataBlocks) {
             totalBytes += db.getNumDataCodewords();
         }
         const resultBytes = new Uint8Array(totalBytes);

@@ -61,22 +61,22 @@ export default /*public final*/ class AztecWriter {
         if (format !== BarcodeFormat.AZTEC) {
             throw new IllegalArgumentException('Can only encode AZTEC, but got ' + format);
         }
-        let aztec = Encoder.encode(StringUtils.getBytes(contents, charset), eccPercent, layers);
+        const aztec = Encoder.encode(StringUtils.getBytes(contents, charset), eccPercent, layers);
         return AztecWriter.renderResult(aztec, width, height);
     }
     static renderResult(code, width, height) {
-        let input = code.getMatrix();
+        const input = code.getMatrix();
         if (input == null) {
             throw new IllegalStateException();
         }
-        let inputWidth = input.getWidth();
-        let inputHeight = input.getHeight();
-        let outputWidth = Math.max(width, inputWidth);
-        let outputHeight = Math.max(height, inputHeight);
-        let multiple = Math.min(outputWidth / inputWidth, outputHeight / inputHeight);
-        let leftPadding = (outputWidth - (inputWidth * multiple)) / 2;
-        let topPadding = (outputHeight - (inputHeight * multiple)) / 2;
-        let output = new BitMatrix(outputWidth, outputHeight);
+        const inputWidth = input.getWidth();
+        const inputHeight = input.getHeight();
+        const outputWidth = Math.max(width, inputWidth);
+        const outputHeight = Math.max(height, inputHeight);
+        const multiple = Math.min(outputWidth / inputWidth, outputHeight / inputHeight);
+        const leftPadding = (outputWidth - (inputWidth * multiple)) / 2;
+        const topPadding = (outputHeight - (inputHeight * multiple)) / 2;
+        const output = new BitMatrix(outputWidth, outputHeight);
         for (let inputY /*int*/ = 0, outputY = topPadding; inputY < inputHeight; inputY++, outputY += multiple) {
             // Write the contents of this row of the barcode
             for (let inputX /*int*/ = 0, outputX = leftPadding; inputX < inputWidth; inputX++, outputX += multiple) {

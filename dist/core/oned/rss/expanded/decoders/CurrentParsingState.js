@@ -1,4 +1,4 @@
-var State;
+let State;
 (function (State) {
     State[State["NUMERIC"] = 0] = "NUMERIC";
     State[State["ALPHA"] = 1] = "ALPHA";

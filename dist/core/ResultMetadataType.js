@@ -20,7 +20,7 @@
  *
  * @author Sean Owen
  */
-var ResultMetadataType;
+let ResultMetadataType;
 (function (ResultMetadataType) {
     /**
      * Unspecified, application-specific metadata. Maps to an unspecified {@link Object}.

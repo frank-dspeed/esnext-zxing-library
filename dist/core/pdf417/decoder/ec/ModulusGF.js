@@ -57,7 +57,7 @@ export default /*public final*/ class ModulusGF extends ModulusBase {
         if (coefficient === 0) {
             return this.zero;
         }
-        let coefficients = new Int32Array(degree + 1);
+        const coefficients = new Int32Array(degree + 1);
         coefficients[0] = coefficient;
         return new ModulusPoly(this, coefficients);
     }

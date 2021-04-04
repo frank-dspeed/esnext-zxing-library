@@ -28,7 +28,7 @@ class BrowserSvgCodeWriter {
         if (width < 0 || height < 0) {
             throw new IllegalArgumentException('Requested dimensions are too small: ' + width + 'x' + height);
         }
-        let quietZone = hints && hints.get(EncodeHintType.MARGIN) !== undefined
+        const quietZone = hints && hints.get(EncodeHintType.MARGIN) !== undefined
             ? Number.parseInt(hints.get(EncodeHintType.MARGIN).toString(), 10)
             : BrowserSvgCodeWriter.QUIET_ZONE_SIZE;
         const code = this.encode(hints, contents);

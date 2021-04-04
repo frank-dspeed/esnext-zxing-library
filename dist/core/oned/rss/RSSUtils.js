@@ -5,12 +5,12 @@ export default class RSSUtils {
     constructor() { }
     static getRSSvalue(widths, maxWidth, noNarrow) {
         let n = 0;
-        for (let width of widths) {
+        for (const width of widths) {
             n += width;
         }
         let val = 0;
         let narrowMask = 0;
-        let elements = widths.length;
+        const elements = widths.length;
         for (let bar = 0; bar < elements - 1; bar++) {
             let elmWidth;
             for (elmWidth = 1, narrowMask |= 1 << bar; elmWidth < widths[bar]; elmWidth++, narrowMask &= ~(1 << bar)) {

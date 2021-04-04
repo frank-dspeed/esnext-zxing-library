@@ -70,14 +70,14 @@ export default class AbstractRSSReader extends OneDReader {
         array[index]--;
     }
     static isFinderPattern(counters) {
-        let firstTwoSum = counters[0] + counters[1];
-        let sum = firstTwoSum + counters[2] + counters[3];
-        let ratio = firstTwoSum / sum;
+        const firstTwoSum = counters[0] + counters[1];
+        const sum = firstTwoSum + counters[2] + counters[3];
+        const ratio = firstTwoSum / sum;
         if (ratio >= AbstractRSSReader.MIN_FINDER_PATTERN_RATIO && ratio <= AbstractRSSReader.MAX_FINDER_PATTERN_RATIO) {
             // passes ratio test in spec, but see if the counts are unreasonable
             let minCounter = Number.MAX_SAFE_INTEGER;
             let maxCounter = Number.MIN_SAFE_INTEGER;
-            for (let counter of counters) {
+            for (const counter of counters) {
                 if (counter > maxCounter) {
                     maxCounter = counter;
                 }

@@ -11,7 +11,7 @@ export default class Arrays {
      */
     static fill(a, val) {
         for (let i = 0, len = a.length; i < len; i++)
-            a[i] = val;
+            {a[i] = val;}
     }
     /**
      * Assigns the specified int value to each element of the specified
@@ -33,7 +33,7 @@ export default class Arrays {
     static fillWithin(a, fromIndex, toIndex, val) {
         Arrays.rangeCheck(a.length, fromIndex, toIndex);
         for (let i = fromIndex; i < toIndex; i++)
-            a[i] = val;
+            {a[i] = val;}
     }
     /**
      * Checks that {@code fromIndex} and {@code toIndex} are in
@@ -54,11 +54,11 @@ export default class Arrays {
         return args;
     }
     static create(rows, cols, value) {
-        let arr = Array.from({ length: rows });
+        const arr = Array.from({ length: rows });
         return arr.map(x => Array.from({ length: cols }).fill(value));
     }
     static createInt32Array(rows, cols, value) {
-        let arr = Array.from({ length: rows });
+        const arr = Array.from({ length: rows });
         return arr.map(x => Int32Array.from({ length: cols }).fill(value));
     }
     static equals(first, second) {

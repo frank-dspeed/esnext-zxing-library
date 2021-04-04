@@ -29,18 +29,18 @@ export default class EAN13Reader extends UPCEANReader {
         this.decodeMiddleCounters = Int32Array.from([0, 0, 0, 0]);
     }
     decodeMiddle(row, startRange, resultString) {
-        let counters = this.decodeMiddleCounters;
+        const counters = this.decodeMiddleCounters;
         counters[0] = 0;
         counters[1] = 0;
         counters[2] = 0;
         counters[3] = 0;
-        let end = row.getSize();
+        const end = row.getSize();
         let rowOffset = startRange[1];
         let lgPatternFound = 0;
         for (let x = 0; x < 6 && rowOffset < end; x++) {
-            let bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_AND_G_PATTERNS);
+            const bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_AND_G_PATTERNS);
             resultString += String.fromCharCode(('0'.charCodeAt(0) + bestMatch % 10));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
             if (bestMatch >= 10) {
@@ -48,12 +48,12 @@ export default class EAN13Reader extends UPCEANReader {
             }
         }
         resultString = EAN13Reader.determineFirstDigit(resultString, lgPatternFound);
-        let middleRange = UPCEANReader.findGuardPattern(row, rowOffset, true, UPCEANReader.MIDDLE_PATTERN, new Int32Array(UPCEANReader.MIDDLE_PATTERN.length).fill(0));
+        const middleRange = UPCEANReader.findGuardPattern(row, rowOffset, true, UPCEANReader.MIDDLE_PATTERN, new Int32Array(UPCEANReader.MIDDLE_PATTERN.length).fill(0));
         rowOffset = middleRange[1];
         for (let x = 0; x < 6 && rowOffset < end; x++) {
-            let bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
+            const bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
             resultString += String.fromCharCode(('0'.charCodeAt(0) + bestMatch));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
         }

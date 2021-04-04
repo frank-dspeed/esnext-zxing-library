@@ -54,7 +54,7 @@ export default /*public final*/ class PDF417Reader {
      */
     // @Override
     decode(image, hints = null) {
-        let result = PDF417Reader.decode(image, hints, false);
+        const result = PDF417Reader.decode(image, hints, false);
         if (result == null || result.length === 0 || result[0] == null) {
             throw NotFoundException.getNotFoundInstance();
         }

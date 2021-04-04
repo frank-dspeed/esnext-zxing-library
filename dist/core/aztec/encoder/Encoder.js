@@ -55,10 +55,10 @@ export default /*public final*/ class Encoder {
      */
     static encode(data, minECCPercent, userSpecifiedLayers) {
         // High-level encode
-        let bits = new HighLevelEncoder(data).encode();
+        const bits = new HighLevelEncoder(data).encode();
         // stuff bits and choose symbol size
-        let eccBits = Integer.truncDivision((bits.getSize() * minECCPercent), 100) + 11;
-        let totalSizeBits = bits.getSize() + eccBits;
+        const eccBits = Integer.truncDivision((bits.getSize() * minECCPercent), 100) + 11;
+        const totalSizeBits = bits.getSize() + eccBits;
         let compact;
         let layers;
         let totalBitsInLayer;
@@ -72,7 +72,7 @@ export default /*public final*/ class Encoder {
             }
             totalBitsInLayer = Encoder.totalBitsInLayer(layers, compact);
             wordSize = Encoder.WORD_SIZE[layers];
-            let usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
+            const usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
             stuffedBits = Encoder.stuffBits(bits, wordSize);
             if (stuffedBits.getSize() + eccBits > usableBitsInLayers) {
                 throw new IllegalArgumentException('Data to large for user specified layer');
@@ -104,7 +104,7 @@ export default /*public final*/ class Encoder {
                     wordSize = Encoder.WORD_SIZE[layers];
                     stuffedBits = Encoder.stuffBits(bits, wordSize);
                 }
-                let usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
+                const usableBitsInLayers = totalBitsInLayer - (totalBitsInLayer % wordSize);
                 if (compact && stuffedBits.getSize() > wordSize * 64) {
                     // Compact format only allows 64 data words, though C4 can hold more words than that
                     continue;
@@ -114,13 +114,13 @@ export default /*public final*/ class Encoder {
                 }
             }
         }
-        let messageBits = Encoder.generateCheckWords(stuffedBits, totalBitsInLayer, wordSize);
+        const messageBits = Encoder.generateCheckWords(stuffedBits, totalBitsInLayer, wordSize);
         // generate mode message
-        let messageSizeInWords = stuffedBits.getSize() / wordSize;
-        let modeMessage = Encoder.generateModeMessage(compact, layers, messageSizeInWords);
+        const messageSizeInWords = stuffedBits.getSize() / wordSize;
+        const modeMessage = Encoder.generateModeMessage(compact, layers, messageSizeInWords);
         // allocate symbol
-        let baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
-        let alignmentMap = new Int32Array(baseMatrixSize);
+        const baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
+        const alignmentMap = new Int32Array(baseMatrixSize);
         let matrixSize;
         if (compact) {
             // no alignment marks in compact mode, alignmentMap is a no-op
@@ -131,20 +131,20 @@ export default /*public final*/ class Encoder {
         }
         else {
             matrixSize = baseMatrixSize + 1 + 2 * Integer.truncDivision((Integer.truncDivision(baseMatrixSize, 2) - 1), 15);
-            let origCenter = Integer.truncDivision(baseMatrixSize, 2);
-            let center = Integer.truncDivision(matrixSize, 2);
+            const origCenter = Integer.truncDivision(baseMatrixSize, 2);
+            const center = Integer.truncDivision(matrixSize, 2);
             for (let i /*int*/ = 0; i < origCenter; i++) {
-                let newOffset = i + Integer.truncDivision(i, 15);
+                const newOffset = i + Integer.truncDivision(i, 15);
                 alignmentMap[origCenter - i - 1] = center - newOffset - 1;
                 alignmentMap[origCenter + i] = center + newOffset + 1;
             }
         }
-        let matrix = new BitMatrix(matrixSize);
+        const matrix = new BitMatrix(matrixSize);
         // draw data bits
         for (let i /*int*/ = 0, rowOffset = 0; i < layers; i++) {
-            let rowSize = (layers - i) * 4 + (compact ? 9 : 12);
+            const rowSize = (layers - i) * 4 + (compact ? 9 : 12);
             for (let j /*int*/ = 0; j < rowSize; j++) {
-                let columnOffset = j * 2;
+                const columnOffset = j * 2;
                 for (let k /*int*/ = 0; k < 2; k++) {
                     if (messageBits.get(rowOffset + columnOffset + k)) {
                         matrix.set(alignmentMap[i * 2 + k], alignmentMap[i * 2 + j]);
@@ -179,7 +179,7 @@ export default /*public final*/ class Encoder {
                 }
             }
         }
-        let aztec = new AztecCode();
+        const aztec = new AztecCode();
         aztec.setCompact(compact);
         aztec.setSize(matrixSize);
         aztec.setLayers(layers);
@@ -218,10 +218,10 @@ export default /*public final*/ class Encoder {
         return modeMessage;
     }
     static drawModeMessage(matrix, compact, matrixSize, modeMessage) {
-        let center = Integer.truncDivision(matrixSize, 2);
+        const center = Integer.truncDivision(matrixSize, 2);
         if (compact) {
             for (let i /*int*/ = 0; i < 7; i++) {
-                let offset = center - 3 + i;
+                const offset = center - 3 + i;
                 if (modeMessage.get(i)) {
                     matrix.set(offset, center - 5);
                 }
@@ -238,7 +238,7 @@ export default /*public final*/ class Encoder {
         }
         else {
             for (let i /*int*/ = 0; i < 10; i++) {
-                let offset = center - 5 + i + Integer.truncDivision(i, 5);
+                const offset = center - 5 + i + Integer.truncDivision(i, 5);
                 if (modeMessage.get(i)) {
                     matrix.set(offset, center - 7);
                 }
@@ -256,13 +256,13 @@ export default /*public final*/ class Encoder {
     }
     static generateCheckWords(bitArray, totalBits, wordSize) {
         // bitArray is guaranteed to be a multiple of the wordSize, so no padding needed
-        let messageSizeInWords = bitArray.getSize() / wordSize;
-        let rs = new ReedSolomonEncoder(Encoder.getGF(wordSize));
-        let totalWords = Integer.truncDivision(totalBits, wordSize);
-        let messageWords = Encoder.bitsToWords(bitArray, wordSize, totalWords);
+        const messageSizeInWords = bitArray.getSize() / wordSize;
+        const rs = new ReedSolomonEncoder(Encoder.getGF(wordSize));
+        const totalWords = Integer.truncDivision(totalBits, wordSize);
+        const messageWords = Encoder.bitsToWords(bitArray, wordSize, totalWords);
         rs.encode(messageWords, totalWords - messageSizeInWords);
-        let startPad = totalBits % wordSize;
-        let messageBits = new BitArray();
+        const startPad = totalBits % wordSize;
+        const messageBits = new BitArray();
         messageBits.appendBits(0, startPad);
         for (const messageWord /*: int*/ of Array.from(messageWords)) {
             messageBits.appendBits(messageWord, wordSize);
@@ -270,7 +270,7 @@ export default /*public final*/ class Encoder {
         return messageBits;
     }
     static bitsToWords(stuffedBits, wordSize, totalWords) {
-        let message = new Int32Array(totalWords);
+        const message = new Int32Array(totalWords);
         let i;
         let n;
         for (i = 0, n = stuffedBits.getSize() / wordSize; i < n; i++) {
@@ -299,9 +299,9 @@ export default /*public final*/ class Encoder {
         }
     }
     static stuffBits(bits, wordSize) {
-        let out = new BitArray();
-        let n = bits.getSize();
-        let mask = (1 << wordSize) - 2;
+        const out = new BitArray();
+        const n = bits.getSize();
+        const mask = (1 << wordSize) - 2;
         for (let i /*int*/ = 0; i < n; i += wordSize) {
             let word = 0;
             for (let j /*int*/ = 0; j < wordSize; j++) {

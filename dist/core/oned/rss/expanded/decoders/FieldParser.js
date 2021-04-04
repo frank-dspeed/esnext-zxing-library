@@ -10,8 +10,8 @@ export default class FieldParser {
         if (rawInformation.length < 2) {
             throw new NotFoundException();
         }
-        let firstTwoDigits = rawInformation.substring(0, 2);
-        for (let dataLength of FieldParser.TWO_DIGIT_DATA_LENGTH) {
+        const firstTwoDigits = rawInformation.substring(0, 2);
+        for (const dataLength of FieldParser.TWO_DIGIT_DATA_LENGTH) {
             if (dataLength[0] === firstTwoDigits) {
                 if (dataLength[1] === FieldParser.VARIABLE_LENGTH) {
                     return FieldParser.processVariableAI(2, dataLength[2], rawInformation);
@@ -22,8 +22,8 @@ export default class FieldParser {
         if (rawInformation.length < 3) {
             throw new NotFoundException();
         }
-        let firstThreeDigits = rawInformation.substring(0, 3);
-        for (let dataLength of FieldParser.THREE_DIGIT_DATA_LENGTH) {
+        const firstThreeDigits = rawInformation.substring(0, 3);
+        for (const dataLength of FieldParser.THREE_DIGIT_DATA_LENGTH) {
             if (dataLength[0] === firstThreeDigits) {
                 if (dataLength[1] === FieldParser.VARIABLE_LENGTH) {
                     return FieldParser.processVariableAI(3, dataLength[2], rawInformation);
@@ -31,7 +31,7 @@ export default class FieldParser {
                 return FieldParser.processFixedAI(3, dataLength[1], rawInformation);
             }
         }
-        for (let dataLength of FieldParser.THREE_DIGIT_PLUS_DIGIT_DATA_LENGTH) {
+        for (const dataLength of FieldParser.THREE_DIGIT_PLUS_DIGIT_DATA_LENGTH) {
             if (dataLength[0] === firstThreeDigits) {
                 if (dataLength[1] === FieldParser.VARIABLE_LENGTH) {
                     return FieldParser.processVariableAI(4, dataLength[2], rawInformation);
@@ -42,8 +42,8 @@ export default class FieldParser {
         if (rawInformation.length < 4) {
             throw new NotFoundException();
         }
-        let firstFourDigits = rawInformation.substring(0, 4);
-        for (let dataLength of FieldParser.FOUR_DIGIT_DATA_LENGTH) {
+        const firstFourDigits = rawInformation.substring(0, 4);
+        for (const dataLength of FieldParser.FOUR_DIGIT_DATA_LENGTH) {
             if (dataLength[0] === firstFourDigits) {
                 if (dataLength[1] === FieldParser.VARIABLE_LENGTH) {
                     return FieldParser.processVariableAI(4, dataLength[2], rawInformation);
@@ -57,18 +57,18 @@ export default class FieldParser {
         if (rawInformation.length < aiSize) {
             throw new NotFoundException();
         }
-        let ai = rawInformation.substring(0, aiSize);
+        const ai = rawInformation.substring(0, aiSize);
         if (rawInformation.length < aiSize + fieldSize) {
             throw new NotFoundException();
         }
-        let field = rawInformation.substring(aiSize, aiSize + fieldSize);
-        let remaining = rawInformation.substring(aiSize + fieldSize);
-        let result = '(' + ai + ')' + field;
-        let parsedAI = FieldParser.parseFieldsInGeneralPurpose(remaining);
+        const field = rawInformation.substring(aiSize, aiSize + fieldSize);
+        const remaining = rawInformation.substring(aiSize + fieldSize);
+        const result = '(' + ai + ')' + field;
+        const parsedAI = FieldParser.parseFieldsInGeneralPurpose(remaining);
         return parsedAI == null ? result : result + parsedAI;
     }
     static processVariableAI(aiSize, variableFieldSize, rawInformation) {
-        let ai = rawInformation.substring(0, aiSize);
+        const ai = rawInformation.substring(0, aiSize);
         let maxSize;
         if (rawInformation.length < aiSize + variableFieldSize) {
             maxSize = rawInformation.length;
@@ -76,10 +76,10 @@ export default class FieldParser {
         else {
             maxSize = aiSize + variableFieldSize;
         }
-        let field = rawInformation.substring(aiSize, maxSize);
-        let remaining = rawInformation.substring(maxSize);
-        let result = '(' + ai + ')' + field;
-        let parsedAI = FieldParser.parseFieldsInGeneralPurpose(remaining);
+        const field = rawInformation.substring(aiSize, maxSize);
+        const remaining = rawInformation.substring(maxSize);
+        const result = '(' + ai + ')' + field;
+        const parsedAI = FieldParser.parseFieldsInGeneralPurpose(remaining);
         return parsedAI == null ? result : result + parsedAI;
     }
 }

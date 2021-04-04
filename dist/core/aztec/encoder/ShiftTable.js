@@ -1,7 +1,7 @@
 import Arrays from '../../util/Arrays';
 import * as C from './EncoderConstants';
 export function static_SHIFT_TABLE(SHIFT_TABLE) {
-    for (let table /*Int32Array*/ of SHIFT_TABLE) {
+    for (const table /*Int32Array*/ of SHIFT_TABLE) {
         Arrays.fill(table, -1);
     }
     SHIFT_TABLE[C.MODE_UPPER][C.MODE_PUNCT] = 0;

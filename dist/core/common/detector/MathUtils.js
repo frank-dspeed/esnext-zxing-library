@@ -30,11 +30,11 @@ export default class MathUtils {
      */
     static round(d /*float*/) {
         if (NaN === d)
-            return 0;
+            {return 0;}
         if (d <= Number.MIN_SAFE_INTEGER)
-            return Number.MIN_SAFE_INTEGER;
+            {return Number.MIN_SAFE_INTEGER;}
         if (d >= Number.MAX_SAFE_INTEGER)
-            return Number.MAX_SAFE_INTEGER;
+            {return Number.MAX_SAFE_INTEGER;}
         return /*(int) */ (d + (d < 0.0 ? -0.5 : 0.5)) | 0;
     }
     // TYPESCRIPTPORT: maybe remove round method and call directly Math.round, it looks like it doesn't make sense for js

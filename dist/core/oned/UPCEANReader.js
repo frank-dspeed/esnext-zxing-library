@@ -37,8 +37,8 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         this.decodeRowStringBuffer = '';
         UPCEANReader.L_AND_G_PATTERNS = UPCEANReader.L_PATTERNS.map(arr => Int32Array.from(arr));
         for (let i = 10; i < 20; i++) {
-            let widths = UPCEANReader.L_PATTERNS[i - 10];
-            let reversedWidths = new Int32Array(widths.length);
+            const widths = UPCEANReader.L_PATTERNS[i - 10];
+            const reversedWidths = new Int32Array(widths.length);
             for (let j = 0; j < widths.length; j++) {
                 reversedWidths[j] = widths[widths.length - j - 1];
             }
@@ -46,32 +46,32 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         }
     }
     decodeRow(rowNumber, row, hints) {
-        let startGuardRange = UPCEANReader.findStartGuardPattern(row);
-        let resultPointCallback = hints == null ? null : hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
+        const startGuardRange = UPCEANReader.findStartGuardPattern(row);
+        const resultPointCallback = hints == null ? null : hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
         if (resultPointCallback != null) {
             const resultPoint = new ResultPoint((startGuardRange[0] + startGuardRange[1]) / 2.0, rowNumber);
             resultPointCallback.foundPossibleResultPoint(resultPoint);
         }
-        let budello = this.decodeMiddle(row, startGuardRange, this.decodeRowStringBuffer);
-        let endStart = budello.rowOffset;
-        let result = budello.resultString;
+        const budello = this.decodeMiddle(row, startGuardRange, this.decodeRowStringBuffer);
+        const endStart = budello.rowOffset;
+        const result = budello.resultString;
         if (resultPointCallback != null) {
             const resultPoint = new ResultPoint(endStart, rowNumber);
             resultPointCallback.foundPossibleResultPoint(resultPoint);
         }
-        let endRange = UPCEANReader.decodeEnd(row, endStart);
+        const endRange = UPCEANReader.decodeEnd(row, endStart);
         if (resultPointCallback != null) {
             const resultPoint = new ResultPoint((endRange[0] + endRange[1]) / 2.0, rowNumber);
             resultPointCallback.foundPossibleResultPoint(resultPoint);
         }
         // Make sure there is a quiet zone at least as big as the end pattern after the barcode. The
         // spec might want more whitespace, but in practice this is the maximum we can count on.
-        let end = endRange[1];
-        let quietEnd = end + (end - endRange[0]);
+        const end = endRange[1];
+        const quietEnd = end + (end - endRange[0]);
         if (quietEnd >= row.getSize() || !row.isRange(end, quietEnd, false)) {
             throw new NotFoundException();
         }
-        let resultString = result.toString();
+        const resultString = result.toString();
         // UPC/EAN should never be less than 8 chars anyway
         if (resultString.length < 8) {
             throw new FormatException();
@@ -79,14 +79,14 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         if (!UPCEANReader.checkChecksum(resultString)) {
             throw new ChecksumException();
         }
-        let left = (startGuardRange[1] + startGuardRange[0]) / 2.0;
-        let right = (endRange[1] + endRange[0]) / 2.0;
-        let format = this.getBarcodeFormat();
-        let resultPoint = [new ResultPoint(left, rowNumber), new ResultPoint(right, rowNumber)];
-        let decodeResult = new Result(resultString, null, 0, resultPoint, format, new Date().getTime());
+        const left = (startGuardRange[1] + startGuardRange[0]) / 2.0;
+        const right = (endRange[1] + endRange[0]) / 2.0;
+        const format = this.getBarcodeFormat();
+        const resultPoint = [new ResultPoint(left, rowNumber), new ResultPoint(right, rowNumber)];
+        const decodeResult = new Result(resultString, null, 0, resultPoint, format, new Date().getTime());
         let extensionLength = 0;
         try {
-            let extensionResult = UPCEANExtensionSupport.decodeRow(rowNumber, row, endRange[1]);
+            const extensionResult = UPCEANExtensionSupport.decodeRow(rowNumber, row, endRange[1]);
             decodeResult.putMetadata(ResultMetadataType.UPC_EAN_EXTENSION, extensionResult.getText());
             decodeResult.putAllMetadata(extensionResult.getResultMetadata());
             decodeResult.addResultPoints(extensionResult.getResultPoints());
@@ -94,10 +94,10 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         }
         catch (err) {
         }
-        let allowedExtensions = hints == null ? null : hints.get(DecodeHintType.ALLOWED_EAN_EXTENSIONS);
+        const allowedExtensions = hints == null ? null : hints.get(DecodeHintType.ALLOWED_EAN_EXTENSIONS);
         if (allowedExtensions != null) {
             let valid = false;
-            for (let length in allowedExtensions) {
+            for (const length in allowedExtensions) {
                 if (extensionLength.toString() === length) { // check me
                     valid = true;
                     break;
@@ -119,17 +119,17 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         return UPCEANReader.checkStandardUPCEANChecksum(s);
     }
     static checkStandardUPCEANChecksum(s) {
-        let length = s.length;
+        const length = s.length;
         if (length === 0)
-            return false;
-        let check = parseInt(s.charAt(length - 1), 10);
+            {return false;}
+        const check = parseInt(s.charAt(length - 1), 10);
         return UPCEANReader.getStandardUPCEANChecksum(s.substring(0, length - 1)) === check;
     }
     static getStandardUPCEANChecksum(s) {
-        let length = s.length;
+        const length = s.length;
         let sum = 0;
         for (let i = length - 1; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+            const digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
                 throw new FormatException();
             }
@@ -137,7 +137,7 @@ export default class UPCEANReader extends AbstractUPCEANReader {
         }
         sum *= 3;
         for (let i = length - 2; i >= 0; i -= 2) {
-            let digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
+            const digit = s.charAt(i).charCodeAt(0) - '0'.charCodeAt(0);
             if (digit < 0 || digit > 9) {
                 throw new FormatException();
             }

@@ -22,7 +22,7 @@
  *
  * @author Sean Owen
  */
-var BarcodeFormat;
+let BarcodeFormat;
 (function (BarcodeFormat) {
     /** Aztec 2D barcode format. */
     BarcodeFormat[BarcodeFormat["AZTEC"] = 0] = "AZTEC";

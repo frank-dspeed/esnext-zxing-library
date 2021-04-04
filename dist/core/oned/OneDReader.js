@@ -169,7 +169,7 @@ export default class OneDReader {
     static recordPattern(row, start, counters) {
         const numCounters = counters.length;
         for (let index = 0; index < numCounters; index++)
-            counters[index] = 0;
+            {counters[index] = 0;}
         const end = row.getSize();
         if (start >= end) {
             throw new NotFoundException();

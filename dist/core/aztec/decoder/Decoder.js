@@ -21,7 +21,7 @@ import FormatException from '../../FormatException';
 import StringUtils from '../../common/StringUtils';
 import Integer from '../../util/Integer';
 // import java.util.Arrays;
-var Table;
+let Table;
 (function (Table) {
     Table[Table["UPPER"] = 0] = "UPPER";
     Table[Table["LOWER"] = 1] = "LOWER";
@@ -39,12 +39,12 @@ var Table;
 export default class Decoder {
     decode(detectorResult) {
         this.ddata = detectorResult;
-        let matrix = detectorResult.getBits();
-        let rawbits = this.extractBits(matrix);
-        let correctedBits = this.correctBits(rawbits);
-        let rawBytes = Decoder.convertBoolArrayToByteArray(correctedBits);
-        let result = Decoder.getEncodedData(correctedBits);
-        let decoderResult = new DecoderResult(rawBytes, result, null, null);
+        const matrix = detectorResult.getBits();
+        const rawbits = this.extractBits(matrix);
+        const correctedBits = this.correctBits(rawbits);
+        const rawBytes = Decoder.convertBoolArrayToByteArray(correctedBits);
+        const result = Decoder.getEncodedData(correctedBits);
+        const decoderResult = new DecoderResult(rawBytes, result, null, null);
         decoderResult.setNumBits(correctedBits.length);
         return decoderResult;
     }
@@ -58,7 +58,7 @@ export default class Decoder {
      * @return the decoded string
      */
     static getEncodedData(correctedBits) {
-        let endIndex = correctedBits.length;
+        const endIndex = correctedBits.length;
         let latchTable = Table.UPPER; // table most recently latched to
         let shiftTable = Table.UPPER; // table to use for the next read
         let result = '';
@@ -90,13 +90,13 @@ export default class Decoder {
                 shiftTable = latchTable;
             }
             else {
-                let size = shiftTable === Table.DIGIT ? 4 : 5;
+                const size = shiftTable === Table.DIGIT ? 4 : 5;
                 if (endIndex - index < size) {
                     break;
                 }
-                let code = Decoder.readCode(correctedBits, index, size);
+                const code = Decoder.readCode(correctedBits, index, size);
                 index += size;
-                let str = Decoder.getCharacter(shiftTable, code);
+                const str = Decoder.getCharacter(shiftTable, code);
                 if (str.startsWith('CTRL_')) {
                     // Table changes
                     // ISO/IEC 24778:2008 prescribes ending a shift sequence in the mode from which it was invoked.
@@ -185,18 +185,18 @@ export default class Decoder {
             codewordSize = 12;
             gf = GenericGF.AZTEC_DATA_12;
         }
-        let numDataCodewords = this.ddata.getNbDatablocks();
-        let numCodewords = rawbits.length / codewordSize;
+        const numDataCodewords = this.ddata.getNbDatablocks();
+        const numCodewords = rawbits.length / codewordSize;
         if (numCodewords < numDataCodewords) {
             throw new FormatException();
         }
         let offset = rawbits.length % codewordSize;
-        let dataWords = new Int32Array(numCodewords);
+        const dataWords = new Int32Array(numCodewords);
         for (let i = 0; i < numCodewords; i++, offset += codewordSize) {
             dataWords[i] = Decoder.readCode(rawbits, offset, codewordSize);
         }
         try {
-            let rsDecoder = new ReedSolomonDecoder(gf);
+            const rsDecoder = new ReedSolomonDecoder(gf);
             rsDecoder.decode(dataWords, numCodewords - numDataCodewords);
         }
         catch (ex) {
@@ -204,10 +204,10 @@ export default class Decoder {
         }
         // Now perform the unstuffing operation.
         // First, count how many bits are going to be thrown out as stuffing
-        let mask = (1 << codewordSize) - 1;
+        const mask = (1 << codewordSize) - 1;
         let stuffedBits = 0;
         for (let i = 0; i < numDataCodewords; i++) {
-            let dataWord = dataWords[i];
+            const dataWord = dataWords[i];
             if (dataWord === 0 || dataWord === mask) {
                 throw new FormatException();
             }
@@ -216,10 +216,10 @@ export default class Decoder {
             }
         }
         // Now, actually unpack the bits and remove the stuffing
-        let correctedBits = new Array(numDataCodewords * codewordSize - stuffedBits);
+        const correctedBits = new Array(numDataCodewords * codewordSize - stuffedBits);
         let index = 0;
         for (let i = 0; i < numDataCodewords; i++) {
-            let dataWord = dataWords[i];
+            const dataWord = dataWords[i];
             if (dataWord === 1 || dataWord === mask - 1) {
                 // next codewordSize-1 bits are all zeros or all ones
                 correctedBits.fill(dataWord > 1, index, index + codewordSize - 1);
@@ -240,35 +240,35 @@ export default class Decoder {
      * @return the array of bits
      */
     extractBits(matrix) {
-        let compact = this.ddata.isCompact();
-        let layers = this.ddata.getNbLayers();
-        let baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
-        let alignmentMap = new Int32Array(baseMatrixSize);
-        let rawbits = new Array(this.totalBitsInLayer(layers, compact));
+        const compact = this.ddata.isCompact();
+        const layers = this.ddata.getNbLayers();
+        const baseMatrixSize = (compact ? 11 : 14) + layers * 4; // not including alignment lines
+        const alignmentMap = new Int32Array(baseMatrixSize);
+        const rawbits = new Array(this.totalBitsInLayer(layers, compact));
         if (compact) {
             for (let i = 0; i < alignmentMap.length; i++) {
                 alignmentMap[i] = i;
             }
         }
         else {
-            let matrixSize = baseMatrixSize + 1 + 2 * Integer.truncDivision((Integer.truncDivision(baseMatrixSize, 2) - 1), 15);
-            let origCenter = baseMatrixSize / 2;
-            let center = Integer.truncDivision(matrixSize, 2);
+            const matrixSize = baseMatrixSize + 1 + 2 * Integer.truncDivision((Integer.truncDivision(baseMatrixSize, 2) - 1), 15);
+            const origCenter = baseMatrixSize / 2;
+            const center = Integer.truncDivision(matrixSize, 2);
             for (let i = 0; i < origCenter; i++) {
-                let newOffset = i + Integer.truncDivision(i, 15);
+                const newOffset = i + Integer.truncDivision(i, 15);
                 alignmentMap[origCenter - i - 1] = center - newOffset - 1;
                 alignmentMap[origCenter + i] = center + newOffset + 1;
             }
         }
         for (let i = 0, rowOffset = 0; i < layers; i++) {
-            let rowSize = (layers - i) * 4 + (compact ? 9 : 12);
+            const rowSize = (layers - i) * 4 + (compact ? 9 : 12);
             // The top-left most point of this layer is <low, low> (not including alignment lines)
-            let low = i * 2;
+            const low = i * 2;
             // The bottom-right most point of this layer is <high, high> (not including alignment lines)
-            let high = baseMatrixSize - 1 - low;
+            const high = baseMatrixSize - 1 - low;
             // We pull bits from the two 2 x rowSize columns and two rowSize x 2 rows
             for (let j = 0; j < rowSize; j++) {
-                let columnOffset = j * 2;
+                const columnOffset = j * 2;
                 for (let k = 0; k < 2; k++) {
                     // left column
                     rawbits[rowOffset + columnOffset + k] =
@@ -305,7 +305,7 @@ export default class Decoder {
      * Reads a code of length 8 in an array of bits, padding with zeros
      */
     static readByte(rawbits, startIndex) {
-        let n = rawbits.length - startIndex;
+        const n = rawbits.length - startIndex;
         if (n >= 8) {
             return Decoder.readCode(rawbits, startIndex, 8);
         }
@@ -315,7 +315,7 @@ export default class Decoder {
      * Packs a bit array into bytes, most significant bit first
      */
     static convertBoolArrayToByteArray(boolArr) {
-        let byteArr = new Uint8Array((boolArr.length + 7) / 8);
+        const byteArr = new Uint8Array((boolArr.length + 7) / 8);
         for (let i = 0; i < byteArr.length; i++) {
             byteArr[i] = Decoder.readByte(boolArr, 8 * i);
         }

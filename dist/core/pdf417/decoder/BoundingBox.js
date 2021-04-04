@@ -96,12 +96,12 @@ export default /*final*/ class BoundingBox {
         let newTopRight = this.topRight;
         let newBottomRight = this.bottomRight;
         if (missingStartRows > 0) {
-            let top = isLeft ? this.topLeft : this.topRight;
+            const top = isLeft ? this.topLeft : this.topRight;
             let newMinY = Math.trunc(top.getY() - missingStartRows);
             if (newMinY < 0) {
                 newMinY = 0;
             }
-            let newTop = new ResultPoint(top.getX(), newMinY);
+            const newTop = new ResultPoint(top.getX(), newMinY);
             if (isLeft) {
                 newTopLeft = newTop;
             }
@@ -110,12 +110,12 @@ export default /*final*/ class BoundingBox {
             }
         }
         if (missingEndRows > 0) {
-            let bottom = isLeft ? this.bottomLeft : this.bottomRight;
+            const bottom = isLeft ? this.bottomLeft : this.bottomRight;
             let newMaxY = Math.trunc(bottom.getY() + missingEndRows);
             if (newMaxY >= this.image.getHeight()) {
                 newMaxY = this.image.getHeight() - 1;
             }
-            let newBottom = new ResultPoint(bottom.getX(), newMaxY);
+            const newBottom = new ResultPoint(bottom.getX(), newMaxY);
             if (isLeft) {
                 newBottomLeft = newBottom;
             }

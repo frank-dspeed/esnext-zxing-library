@@ -19,7 +19,7 @@
  *
  * @author dswitkin@google.com (Daniel Switkin)
  */
-var EncodeHintType;
+let EncodeHintType;
 (function (EncodeHintType) {
     /**
      * Specifies what degree of error correction to use, for example in QR Codes.

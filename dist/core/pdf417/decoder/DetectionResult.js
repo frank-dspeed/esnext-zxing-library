@@ -54,12 +54,12 @@ export default /*final*/ class DetectionResult {
      * will be counted several times. It just serves as an indicator to see when we can stop adjusting row numbers
      */
     adjustRowNumbersAndGetCount() {
-        let unadjustedCount = this.adjustRowNumbersByRow();
+        const unadjustedCount = this.adjustRowNumbersByRow();
         if (unadjustedCount === 0) {
             return 0;
         }
         for (let barcodeColumn /*int*/ = 1; barcodeColumn < this.barcodeColumnCount + 1; barcodeColumn++) {
-            let codewords = this.detectionResultColumns[barcodeColumn].getCodewords();
+            const codewords = this.detectionResultColumns[barcodeColumn].getCodewords();
             for (let codewordsRow /*int*/ = 0; codewordsRow < codewords.length; codewordsRow++) {
                 if (codewords[codewordsRow] == null) {
                     continue;
@@ -77,21 +77,21 @@ export default /*final*/ class DetectionResult {
         // Maybe it's even better to calculated the height (rows: d) and divide it by the number of barcode
         // rows. This, together with the LRI and RRI row numbers should allow us to get a good estimate where a row
         // number starts and ends.
-        let unadjustedCount = this.adjustRowNumbersFromLRI();
+        const unadjustedCount = this.adjustRowNumbersFromLRI();
         return unadjustedCount + this.adjustRowNumbersFromRRI();
     }
     adjustRowNumbersFromBothRI() {
         if (this.detectionResultColumns[0] == null || this.detectionResultColumns[this.barcodeColumnCount + 1] == null) {
             return;
         }
-        let LRIcodewords = this.detectionResultColumns[0].getCodewords();
-        let RRIcodewords = this.detectionResultColumns[this.barcodeColumnCount + 1].getCodewords();
+        const LRIcodewords = this.detectionResultColumns[0].getCodewords();
+        const RRIcodewords = this.detectionResultColumns[this.barcodeColumnCount + 1].getCodewords();
         for (let codewordsRow /*int*/ = 0; codewordsRow < LRIcodewords.length; codewordsRow++) {
             if (LRIcodewords[codewordsRow] != null &&
                 RRIcodewords[codewordsRow] != null &&
                 LRIcodewords[codewordsRow].getRowNumber() === RRIcodewords[codewordsRow].getRowNumber()) {
                 for (let barcodeColumn /*int*/ = 1; barcodeColumn <= this.barcodeColumnCount; barcodeColumn++) {
-                    let codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
+                    const codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
                     if (codeword == null) {
                         continue;
                     }
@@ -108,15 +108,15 @@ export default /*final*/ class DetectionResult {
             return 0;
         }
         let unadjustedCount = 0;
-        let codewords = this.detectionResultColumns[this.barcodeColumnCount + 1].getCodewords();
+        const codewords = this.detectionResultColumns[this.barcodeColumnCount + 1].getCodewords();
         for (let codewordsRow /*int*/ = 0; codewordsRow < codewords.length; codewordsRow++) {
             if (codewords[codewordsRow] == null) {
                 continue;
             }
-            let rowIndicatorRowNumber = codewords[codewordsRow].getRowNumber();
+            const rowIndicatorRowNumber = codewords[codewordsRow].getRowNumber();
             let invalidRowCounts = 0;
             for (let barcodeColumn /*int*/ = this.barcodeColumnCount + 1; barcodeColumn > 0 && invalidRowCounts < this.ADJUST_ROW_NUMBER_SKIP; barcodeColumn--) {
-                let codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
+                const codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
                 if (codeword != null) {
                     invalidRowCounts = DetectionResult.adjustRowNumberIfValid(rowIndicatorRowNumber, invalidRowCounts, codeword);
                     if (!codeword.hasValidRowNumber()) {
@@ -132,15 +132,15 @@ export default /*final*/ class DetectionResult {
             return 0;
         }
         let unadjustedCount = 0;
-        let codewords = this.detectionResultColumns[0].getCodewords();
+        const codewords = this.detectionResultColumns[0].getCodewords();
         for (let codewordsRow /*int*/ = 0; codewordsRow < codewords.length; codewordsRow++) {
             if (codewords[codewordsRow] == null) {
                 continue;
             }
-            let rowIndicatorRowNumber = codewords[codewordsRow].getRowNumber();
+            const rowIndicatorRowNumber = codewords[codewordsRow].getRowNumber();
             let invalidRowCounts = 0;
             for (let barcodeColumn /*int*/ = 1; barcodeColumn < this.barcodeColumnCount + 1 && invalidRowCounts < this.ADJUST_ROW_NUMBER_SKIP; barcodeColumn++) {
-                let codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
+                const codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
                 if (codeword != null) {
                     invalidRowCounts = DetectionResult.adjustRowNumberIfValid(rowIndicatorRowNumber, invalidRowCounts, codeword);
                     if (!codeword.hasValidRowNumber()) {
@@ -167,14 +167,14 @@ export default /*final*/ class DetectionResult {
         return invalidRowCounts;
     }
     adjustRowNumbers(barcodeColumn, codewordsRow, codewords) {
-        let codeword = codewords[codewordsRow];
-        let previousColumnCodewords = this.detectionResultColumns[barcodeColumn - 1].getCodewords();
+        const codeword = codewords[codewordsRow];
+        const previousColumnCodewords = this.detectionResultColumns[barcodeColumn - 1].getCodewords();
         let nextColumnCodewords = previousColumnCodewords;
         if (this.detectionResultColumns[barcodeColumn + 1] != null) {
             nextColumnCodewords = this.detectionResultColumns[barcodeColumn + 1].getCodewords();
         }
         // let otherCodewords: Codeword[] = new Codeword[14];
-        let otherCodewords = new Array(14);
+        const otherCodewords = new Array(14);
         otherCodewords[2] = previousColumnCodewords[codewordsRow];
         otherCodewords[3] = nextColumnCodewords[codewordsRow];
         if (codewordsRow > 0) {
@@ -197,7 +197,7 @@ export default /*final*/ class DetectionResult {
             otherCodewords[12] = previousColumnCodewords[codewordsRow + 2];
             otherCodewords[13] = nextColumnCodewords[codewordsRow + 2];
         }
-        for (let otherCodeword of otherCodewords) {
+        for (const otherCodeword of otherCodewords) {
             if (DetectionResult.adjustRowNumber(codeword, otherCodeword)) {
                 return;
             }
@@ -244,7 +244,7 @@ export default /*final*/ class DetectionResult {
             rowIndicatorColumn = this.detectionResultColumns[this.barcodeColumnCount + 1];
         }
         // try (
-        let formatter = new Formatter();
+        const formatter = new Formatter();
         // ) {
         for (let codewordsRow /*int*/ = 0; codewordsRow < rowIndicatorColumn.getCodewords().length; codewordsRow++) {
             formatter.format('CW %3d:', codewordsRow);
@@ -253,7 +253,7 @@ export default /*final*/ class DetectionResult {
                     formatter.format('    |   ');
                     continue;
                 }
-                let codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
+                const codeword = this.detectionResultColumns[barcodeColumn].getCodewords()[codewordsRow];
                 if (codeword == null) {
                     formatter.format('    |   ');
                     continue;

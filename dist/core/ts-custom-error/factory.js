@@ -2,7 +2,7 @@ import { fixStack } from './utils';
 export function customErrorFactory(fn, parent = Error) {
     function CustomError(...args) {
         if (!(this instanceof CustomError))
-            return new CustomError(...args);
+            {return new CustomError(...args);}
         parent.apply(this, args);
         Object.defineProperty(this, 'name', {
             value: fn.name || parent.name,

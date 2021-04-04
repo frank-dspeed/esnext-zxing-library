@@ -68,7 +68,7 @@ export default class Version {
         let total = 0;
         const ecCodewords = ecBlocks.getECCodewords();
         const ecbArray = ecBlocks.getECBlocks();
-        for (let ecBlock of ecbArray) {
+        for (const ecBlock of ecbArray) {
             total += ecBlock.getCount() * (ecBlock.getDataCodewords() + ecCodewords);
         }
         this.totalCodewords = total;
@@ -106,7 +106,7 @@ export default class Version {
         if ((numRows & 0x01) !== 0 || (numColumns & 0x01) !== 0) {
             throw new FormatException();
         }
-        for (let version of Version.VERSIONS) {
+        for (const version of Version.VERSIONS) {
             if (version.symbolSizeRows === numRows && version.symbolSizeColumns === numColumns) {
                 return version;
             }

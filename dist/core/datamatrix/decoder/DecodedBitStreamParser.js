@@ -20,7 +20,7 @@ import IllegalStateException from '../../IllegalStateException';
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var Mode;
+let Mode;
 (function (Mode) {
     Mode[Mode["PAD_ENCODE"] = 0] = "PAD_ENCODE";
     Mode[Mode["ASCII_ENCODE"] = 1] = "ASCII_ENCODE";
@@ -254,7 +254,7 @@ export default class DecodedBitStreamParser {
         // (1600 * C1) + (40 * C2) + C3 + 1
         // TODO(bbrown): The Upper Shift with Text doesn't work in the 4 value scenario all the time
         let upperShift = false;
-        let cValues = [];
+        const cValues = [];
         let shift = 0;
         do {
             // If there is only one byte left then it will be encoded as ASCII

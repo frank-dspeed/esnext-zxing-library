@@ -32,8 +32,8 @@ import UPCEReader from './UPCEReader';
 export default class MultiFormatUPCEANReader extends OneDReader {
     constructor(hints) {
         super();
-        let possibleFormats = hints == null ? null : hints.get(DecodeHintType.POSSIBLE_FORMATS);
-        let readers = [];
+        const possibleFormats = hints == null ? null : hints.get(DecodeHintType.POSSIBLE_FORMATS);
+        const readers = [];
         if (possibleFormats != null) {
             if (possibleFormats.indexOf(BarcodeFormat.EAN_13) > -1) {
                 readers.push(new EAN13Reader());
@@ -57,7 +57,7 @@ export default class MultiFormatUPCEANReader extends OneDReader {
         this.readers = readers;
     }
     decodeRow(rowNumber, row, hints) {
-        for (let reader of this.readers) {
+        for (const reader of this.readers) {
             try {
                 // const result: Result = reader.decodeRow(rowNumber, row, startGuardPattern, hints);
                 const result = reader.decodeRow(rowNumber, row, hints);
@@ -94,7 +94,7 @@ export default class MultiFormatUPCEANReader extends OneDReader {
         throw new NotFoundException();
     }
     reset() {
-        for (let reader of this.readers) {
+        for (const reader of this.readers) {
             reader.reset();
         }
     }

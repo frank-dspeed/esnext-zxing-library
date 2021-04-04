@@ -125,7 +125,7 @@ export default class GenericGFPoly {
             smallerCoefficients = largerCoefficients;
             largerCoefficients = temp;
         }
-        let sumDiff = new Int32Array(largerCoefficients.length);
+        const sumDiff = new Int32Array(largerCoefficients.length);
         const lengthDiff = largerCoefficients.length - smallerCoefficients.length;
         // Copy high-order terms only found in higher-degree polynomial's coefficients
         System.arraycopy(largerCoefficients, 0, sumDiff, 0, lengthDiff);

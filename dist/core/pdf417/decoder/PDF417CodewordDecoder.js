@@ -50,19 +50,19 @@ export default /*final*/ class PDF417CodewordDecoder {
         this.bSymbolTableReady = true;
     }
     static getDecodedValue(moduleBitCount) {
-        let decodedValue = PDF417CodewordDecoder.getDecodedCodewordValue(PDF417CodewordDecoder.sampleBitCounts(moduleBitCount));
+        const decodedValue = PDF417CodewordDecoder.getDecodedCodewordValue(PDF417CodewordDecoder.sampleBitCounts(moduleBitCount));
         if (decodedValue !== -1) {
             return decodedValue;
         }
         return PDF417CodewordDecoder.getClosestDecodedValue(moduleBitCount);
     }
     static sampleBitCounts(moduleBitCount) {
-        let bitCountSum = MathUtils.sum(moduleBitCount);
-        let result = new Int32Array(PDF417Common.BARS_IN_MODULE);
+        const bitCountSum = MathUtils.sum(moduleBitCount);
+        const result = new Int32Array(PDF417Common.BARS_IN_MODULE);
         let bitCountIndex = 0;
         let sumPreviousBits = 0;
         for ( /*int*/let i = 0; i < PDF417Common.MODULES_IN_CODEWORD; i++) {
-            let sampleIndex = bitCountSum / (2 * PDF417Common.MODULES_IN_CODEWORD) +
+            const sampleIndex = bitCountSum / (2 * PDF417Common.MODULES_IN_CODEWORD) +
                 (i * bitCountSum) / PDF417Common.MODULES_IN_CODEWORD;
             if (sumPreviousBits + moduleBitCount[bitCountIndex] <= sampleIndex) {
                 sumPreviousBits += moduleBitCount[bitCountIndex];
@@ -73,7 +73,7 @@ export default /*final*/ class PDF417CodewordDecoder {
         return result;
     }
     static getDecodedCodewordValue(moduleBitCount) {
-        let decodedValue = PDF417CodewordDecoder.getBitValue(moduleBitCount);
+        const decodedValue = PDF417CodewordDecoder.getBitValue(moduleBitCount);
         return PDF417Common.getCodeword(decodedValue) === -1 ? -1 : decodedValue;
     }
     static getBitValue(moduleBitCount) {
@@ -87,8 +87,8 @@ export default /*final*/ class PDF417CodewordDecoder {
     }
     // working with 32bit float (as in Java)
     static getClosestDecodedValue(moduleBitCount) {
-        let bitCountSum = MathUtils.sum(moduleBitCount);
-        let bitCountRatios = new Array(PDF417Common.BARS_IN_MODULE);
+        const bitCountSum = MathUtils.sum(moduleBitCount);
+        const bitCountRatios = new Array(PDF417Common.BARS_IN_MODULE);
         if (bitCountSum > 1) {
             for (let /*int*/ i = 0; i < bitCountRatios.length; i++) {
                 bitCountRatios[i] = Math.fround(moduleBitCount[i] / bitCountSum);
@@ -101,9 +101,9 @@ export default /*final*/ class PDF417CodewordDecoder {
         }
         for ( /*int*/let j = 0; j < PDF417CodewordDecoder.RATIOS_TABLE.length; j++) {
             let error = 0.0;
-            let ratioTableRow = PDF417CodewordDecoder.RATIOS_TABLE[j];
+            const ratioTableRow = PDF417CodewordDecoder.RATIOS_TABLE[j];
             for ( /*int*/let k = 0; k < PDF417Common.BARS_IN_MODULE; k++) {
-                let diff = Math.fround(ratioTableRow[k] - bitCountRatios[k]);
+                const diff = Math.fround(ratioTableRow[k] - bitCountRatios[k]);
                 error += Math.fround(diff * diff);
                 if (error >= bestMatchError) {
                     break;

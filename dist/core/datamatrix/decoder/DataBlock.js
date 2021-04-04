@@ -42,13 +42,13 @@ export default class DataBlock {
         // First count the total number of data blocks
         let totalBlocks = 0;
         const ecBlockArray = ecBlocks.getECBlocks();
-        for (let ecBlock of ecBlockArray) {
+        for (const ecBlock of ecBlockArray) {
             totalBlocks += ecBlock.getCount();
         }
         // Now establish DataBlocks of the appropriate size and number of data codewords
         const result = new Array(totalBlocks);
         let numResultBlocks = 0;
-        for (let ecBlock of ecBlockArray) {
+        for (const ecBlock of ecBlockArray) {
             for (let i = 0; i < ecBlock.getCount(); i++) {
                 const numDataCodewords = ecBlock.getDataCodewords();
                 const numBlockCodewords = ecBlocks.getECCodewords() + numDataCodewords;

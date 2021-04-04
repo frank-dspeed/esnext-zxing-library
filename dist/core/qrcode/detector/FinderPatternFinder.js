@@ -440,7 +440,7 @@ export default class FinderPatternFinder {
         const stateCountTotal = stateCount[0] + stateCount[1] + stateCount[2] + stateCount[3] +
             stateCount[4];
         let centerJ = FinderPatternFinder.centerFromEnd(stateCount, j);
-        let centerI = this.crossCheckVertical(i, /*(int) */ Math.floor(centerJ), stateCount[2], stateCountTotal);
+        const centerI = this.crossCheckVertical(i, /*(int) */ Math.floor(centerJ), stateCount[2], stateCountTotal);
         if (!isNaN(centerI)) {
             // Re-cross check
             centerJ = this.crossCheckHorizontal(/*(int) */ Math.floor(centerJ), /*(int) */ Math.floor(centerI), stateCount[2], stateCountTotal);
@@ -555,7 +555,7 @@ export default class FinderPatternFinder {
                 square += size * size;
             }
             average = totalModuleSize / startSize;
-            let stdDev = Math.sqrt(square / startSize - average * average);
+            const stdDev = Math.sqrt(square / startSize - average * average);
             possibleCenters.sort(
             /**
              * <p>Orders by furthest from average</p>

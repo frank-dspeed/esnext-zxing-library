@@ -38,7 +38,7 @@ import Mode from './Mode';
 export default class DecodedBitStreamParser {
     static decode(bytes, version, ecLevel, hints) {
         const bits = new BitSource(bytes);
-        let result = new StringBuilder();
+        const result = new StringBuilder();
         const byteSegments = new Array(); // 1
         // TYPESCRIPTPORT: I do not use constructor with size 1 as in original Java means capacity and the array length is checked below
         let symbolSequence = -1;

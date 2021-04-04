@@ -88,7 +88,7 @@ class LuminanceSource {
     /*@Override*/
     toString() {
         const row = new Uint8ClampedArray(this.width);
-        let result = new StringBuilder();
+        const result = new StringBuilder();
         for (let y = 0; y < this.height; y++) {
             const sourceRow = this.getRow(y, row);
             for (let x = 0; x < this.width; x++) {

@@ -39,11 +39,11 @@ export default /*public final*/ class ErrorCorrection {
      * @throws ChecksumException if errors cannot be corrected, maybe because of too many errors
      */
     decode(received, numECCodewords, erasures) {
-        let poly = new ModulusPoly(this.field, received);
-        let S = new Int32Array(numECCodewords);
+        const poly = new ModulusPoly(this.field, received);
+        const S = new Int32Array(numECCodewords);
         let error = false;
         for (let i /*int*/ = numECCodewords; i > 0; i--) {
-            let evaluation = poly.evaluateAt(this.field.exp(i));
+            const evaluation = poly.evaluateAt(this.field.exp(i));
             S[numECCodewords - i] = evaluation;
             if (evaluation !== 0) {
                 error = true;
@@ -55,22 +55,22 @@ export default /*public final*/ class ErrorCorrection {
         let knownErrors = this.field.getOne();
         if (erasures != null) {
             for (const erasure of erasures) {
-                let b = this.field.exp(received.length - 1 - erasure);
+                const b = this.field.exp(received.length - 1 - erasure);
                 // Add (1 - bx) term:
-                let term = new ModulusPoly(this.field, new Int32Array([this.field.subtract(0, b), 1]));
+                const term = new ModulusPoly(this.field, new Int32Array([this.field.subtract(0, b), 1]));
                 knownErrors = knownErrors.multiply(term);
             }
         }
-        let syndrome = new ModulusPoly(this.field, S);
+        const syndrome = new ModulusPoly(this.field, S);
         // syndrome = syndrome.multiply(knownErrors);
-        let sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(numECCodewords, 1), syndrome, numECCodewords);
-        let sigma = sigmaOmega[0];
-        let omega = sigmaOmega[1];
+        const sigmaOmega = this.runEuclideanAlgorithm(this.field.buildMonomial(numECCodewords, 1), syndrome, numECCodewords);
+        const sigma = sigmaOmega[0];
+        const omega = sigmaOmega[1];
         // sigma = sigma.multiply(knownErrors);
-        let errorLocations = this.findErrorLocations(sigma);
-        let errorMagnitudes = this.findErrorMagnitudes(omega, sigma, errorLocations);
+        const errorLocations = this.findErrorLocations(sigma);
+        const errorMagnitudes = this.findErrorMagnitudes(omega, sigma, errorLocations);
         for (let i /*int*/ = 0; i < errorLocations.length; i++) {
-            let position = received.length - 1 - this.field.log(errorLocations[i]);
+            const position = received.length - 1 - this.field.log(errorLocations[i]);
             if (position < 0) {
                 throw ChecksumException.getChecksumInstance();
             }
@@ -91,7 +91,7 @@ export default /*public final*/ class ErrorCorrection {
     runEuclideanAlgorithm(a, b, R) {
         // Assume a's degree is >= b's
         if (a.getDegree() < b.getDegree()) {
-            let temp = a;
+            const temp = a;
             a = b;
             b = temp;
         }
@@ -101,8 +101,8 @@ export default /*public final*/ class ErrorCorrection {
         let t = this.field.getOne();
         // Run Euclidean algorithm until r's degree is less than R/2
         while (r.getDegree() >= Math.round(R / 2)) {
-            let rLastLast = rLast;
-            let tLastLast = tLast;
+            const rLastLast = rLast;
+            const tLastLast = tLast;
             rLast = r;
             tLast = t;
             // Divide rLastLast by rLast, with quotient in q and remainder in r
@@ -112,23 +112,23 @@ export default /*public final*/ class ErrorCorrection {
             }
             r = rLastLast;
             let q = this.field.getZero();
-            let denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
-            let dltInverse = this.field.inverse(denominatorLeadingTerm);
+            const denominatorLeadingTerm = rLast.getCoefficient(rLast.getDegree());
+            const dltInverse = this.field.inverse(denominatorLeadingTerm);
             while (r.getDegree() >= rLast.getDegree() && !r.isZero()) {
-                let degreeDiff = r.getDegree() - rLast.getDegree();
-                let scale = this.field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
+                const degreeDiff = r.getDegree() - rLast.getDegree();
+                const scale = this.field.multiply(r.getCoefficient(r.getDegree()), dltInverse);
                 q = q.add(this.field.buildMonomial(degreeDiff, scale));
                 r = r.subtract(rLast.multiplyByMonomial(degreeDiff, scale));
             }
             t = q.multiply(tLast).subtract(tLastLast).negative();
         }
-        let sigmaTildeAtZero = t.getCoefficient(0);
+        const sigmaTildeAtZero = t.getCoefficient(0);
         if (sigmaTildeAtZero === 0) {
             throw ChecksumException.getChecksumInstance();
         }
-        let inverse = this.field.inverse(sigmaTildeAtZero);
-        let sigma = t.multiply(inverse);
-        let omega = r.multiply(inverse);
+        const inverse = this.field.inverse(sigmaTildeAtZero);
+        const sigma = t.multiply(inverse);
+        const omega = r.multiply(inverse);
         return [sigma, omega];
     }
     /**
@@ -138,8 +138,8 @@ export default /*public final*/ class ErrorCorrection {
      */
     findErrorLocations(errorLocator) {
         // This is a direct application of Chien's search
-        let numErrors = errorLocator.getDegree();
-        let result = new Int32Array(numErrors);
+        const numErrors = errorLocator.getDegree();
+        const result = new Int32Array(numErrors);
         let e = 0;
         for (let i /*int*/ = 1; i < this.field.getSize() && e < numErrors; i++) {
             if (errorLocator.evaluateAt(i) === 0) {
@@ -153,20 +153,20 @@ export default /*public final*/ class ErrorCorrection {
         return result;
     }
     findErrorMagnitudes(errorEvaluator, errorLocator, errorLocations) {
-        let errorLocatorDegree = errorLocator.getDegree();
-        let formalDerivativeCoefficients = new Int32Array(errorLocatorDegree);
+        const errorLocatorDegree = errorLocator.getDegree();
+        const formalDerivativeCoefficients = new Int32Array(errorLocatorDegree);
         for (let i /*int*/ = 1; i <= errorLocatorDegree; i++) {
             formalDerivativeCoefficients[errorLocatorDegree - i] =
                 this.field.multiply(i, errorLocator.getCoefficient(i));
         }
-        let formalDerivative = new ModulusPoly(this.field, formalDerivativeCoefficients);
+        const formalDerivative = new ModulusPoly(this.field, formalDerivativeCoefficients);
         // This is directly applying Forney's Formula
-        let s = errorLocations.length;
-        let result = new Int32Array(s);
+        const s = errorLocations.length;
+        const result = new Int32Array(s);
         for (let i /*int*/ = 0; i < s; i++) {
-            let xiInverse = this.field.inverse(errorLocations[i]);
-            let numerator = this.field.subtract(0, errorEvaluator.evaluateAt(xiInverse));
-            let denominator = this.field.inverse(formalDerivative.evaluateAt(xiInverse));
+            const xiInverse = this.field.inverse(errorLocations[i]);
+            const numerator = this.field.subtract(0, errorEvaluator.evaluateAt(xiInverse));
+            const denominator = this.field.inverse(formalDerivative.evaluateAt(xiInverse));
             result[i] = this.field.multiply(numerator, denominator);
         }
         return result;

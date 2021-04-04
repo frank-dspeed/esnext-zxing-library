@@ -5,7 +5,7 @@ export default class Integer {
     static numberOfTrailingZeros(i) {
         let y;
         if (i === 0)
-            return 32;
+            {return 32;}
         let n = 31;
         y = i << 16;
         if (y !== 0) {

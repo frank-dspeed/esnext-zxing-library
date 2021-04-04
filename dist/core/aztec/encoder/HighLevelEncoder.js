@@ -49,7 +49,7 @@ export default /*public final*/ class HighLevelEncoder {
         let states = Collections.singletonList(State.INITIAL_STATE);
         for (let index = 0; index < this.text.length; index++) {
             let pairCode;
-            let nextChar = index + 1 < this.text.length ? this.text[index + 1] : 0;
+            const nextChar = index + 1 < this.text.length ? this.text[index + 1] : 0;
             switch (this.text[index]) {
                 case StringUtils.getCharCode('\r'):
                     pairCode = nextChar === lineBreakCharCode ? 2 : 0;
@@ -89,7 +89,7 @@ export default /*public final*/ class HighLevelEncoder {
     // non-optimal states.
     updateStateListForChar(states, index) {
         const result = [];
-        for (let state /*State*/ of states) {
+        for (const state /*State*/ of states) {
             this.updateStateForChar(state, index, result);
         }
         return HighLevelEncoder.simplifyStates(result);
@@ -98,11 +98,11 @@ export default /*public final*/ class HighLevelEncoder {
     // state for the next character.  The resulting set of states are added to
     // the "result" list.
     updateStateForChar(state, index, result) {
-        let ch = (this.text[index] & 0xff);
-        let charInCurrentTable = CharMap.CHAR_MAP[state.getMode()][ch] > 0;
+        const ch = (this.text[index] & 0xff);
+        const charInCurrentTable = CharMap.CHAR_MAP[state.getMode()][ch] > 0;
         let stateNoBinary = null;
         for (let mode /*int*/ = 0; mode <= C.MODE_PUNCT; mode++) {
-            let charInMode = CharMap.CHAR_MAP[mode][ch];
+            const charInMode = CharMap.CHAR_MAP[mode][ch];
             if (charInMode > 0) {
                 if (stateNoBinary == null) {
                     // Only create stateNoBinary the first time it's required.
@@ -134,19 +134,19 @@ export default /*public final*/ class HighLevelEncoder {
             // It's never worthwhile to go into binary shift mode if you're not already
             // in binary shift mode, and the character exists in your current mode.
             // That can never save bits over just outputting the char in the current mode.
-            let binaryState = state.addBinaryShiftChar(index);
+            const binaryState = state.addBinaryShiftChar(index);
             result.push(binaryState);
         }
     }
     static updateStateListForPair(states, index, pairCode) {
         const result = [];
-        for (let state /*State*/ of states) {
+        for (const state /*State*/ of states) {
             this.updateStateForPair(state, index, pairCode, result);
         }
         return this.simplifyStates(result);
     }
     static updateStateForPair(state, index, pairCode, result) {
-        let stateNoBinary = state.endBinaryShift(index);
+        const stateNoBinary = state.endBinaryShift(index);
         // Possibility 1.  Latch to C.MODE_PUNCT, and then append this code
         result.push(stateNoBinary.latchAndAppend(C.MODE_PUNCT, pairCode));
         if (state.getMode() !== C.MODE_PUNCT) {
@@ -156,7 +156,7 @@ export default /*public final*/ class HighLevelEncoder {
         }
         if (pairCode === 3 || pairCode === 4) {
             // both characters are in DIGITS.  Sometimes better to just add two digits
-            let digitState = stateNoBinary
+            const digitState = stateNoBinary
                 .latchAndAppend(C.MODE_DIGIT, 16 - pairCode) // period or comma in DIGIT
                 .latchAndAppend(C.MODE_DIGIT, 1); // space in DIGIT
             result.push(digitState);
@@ -164,7 +164,7 @@ export default /*public final*/ class HighLevelEncoder {
         if (state.getBinaryShiftByteCount() > 0) {
             // It only makes sense to do the characters as binary if we're already
             // in binary mode.
-            let binaryState = state
+            const binaryState = state
                 .addBinaryShiftChar(index)
                 .addBinaryShiftChar(index + 1);
             result.push(binaryState);

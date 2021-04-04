@@ -37,11 +37,11 @@ export default class AztecReader {
      */
     decode(image, hints = null) {
         let exception = null;
-        let detector = new Detector(image.getBlackMatrix());
+        const detector = new Detector(image.getBlackMatrix());
         let points = null;
         let decoderResult = null;
         try {
-            let detectorResult = detector.detectMirror(false);
+            const detectorResult = detector.detectMirror(false);
             points = detectorResult.getPoints();
             this.reportFoundResultPoints(hints, points);
             decoderResult = new Decoder().decode(detectorResult);
@@ -51,7 +51,7 @@ export default class AztecReader {
         }
         if (decoderResult == null) {
             try {
-                let detectorResult = detector.detectMirror(true);
+                const detectorResult = detector.detectMirror(true);
                 points = detectorResult.getPoints();
                 this.reportFoundResultPoints(hints, points);
                 decoderResult = new Decoder().decode(detectorResult);
@@ -63,12 +63,12 @@ export default class AztecReader {
                 throw e;
             }
         }
-        let result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), decoderResult.getNumBits(), points, BarcodeFormat.AZTEC, System.currentTimeMillis());
-        let byteSegments = decoderResult.getByteSegments();
+        const result = new Result(decoderResult.getText(), decoderResult.getRawBytes(), decoderResult.getNumBits(), points, BarcodeFormat.AZTEC, System.currentTimeMillis());
+        const byteSegments = decoderResult.getByteSegments();
         if (byteSegments != null) {
             result.putMetadata(ResultMetadataType.BYTE_SEGMENTS, byteSegments);
         }
-        let ecLevel = decoderResult.getECLevel();
+        const ecLevel = decoderResult.getECLevel();
         if (ecLevel != null) {
             result.putMetadata(ResultMetadataType.ERROR_CORRECTION_LEVEL, ecLevel);
         }
@@ -76,7 +76,7 @@ export default class AztecReader {
     }
     reportFoundResultPoints(hints, points) {
         if (hints != null) {
-            let rpcb = hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
+            const rpcb = hints.get(DecodeHintType.NEED_RESULT_POINT_CALLBACK);
             if (rpcb != null) {
                 points.forEach((point, idx, arr) => {
                     rpcb.foundPossibleResultPoint(point);

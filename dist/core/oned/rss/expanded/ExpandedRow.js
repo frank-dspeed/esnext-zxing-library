@@ -34,7 +34,7 @@ export default class ExpandedRow {
     }
     checkEqualitity(pair1, pair2) {
         if (!pair1 || !pair2)
-            return;
+            {return;}
         let result;
         pair1.forEach((e1, i) => {
             pair2.forEach(e2 => {

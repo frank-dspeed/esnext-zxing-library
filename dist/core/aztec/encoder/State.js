@@ -59,11 +59,11 @@ export default /*final*/ class State {
         let bitCount = this.bitCount;
         let token = this.token;
         if (mode !== this.mode) {
-            let latch = LatchTable.LATCH_TABLE[this.mode][mode];
+            const latch = LatchTable.LATCH_TABLE[this.mode][mode];
             token = TokenHelpers.add(token, latch & 0xffff, latch >> 16);
             bitCount += latch >> 16;
         }
-        let latchModeBitCount = mode === C.MODE_DIGIT ? 4 : 5;
+        const latchModeBitCount = mode === C.MODE_DIGIT ? 4 : 5;
         token = TokenHelpers.add(token, value, latchModeBitCount);
         return new State(token, mode, 0, bitCount + latchModeBitCount);
     }
@@ -72,7 +72,7 @@ export default /*final*/ class State {
     shiftAndAppend(mode, value) {
         // assert binaryShiftByteCount === 0 && this.mode !== mode;
         let token = this.token;
-        let thisModeBitCount = this.mode === C.MODE_DIGIT ? 4 : 5;
+        const thisModeBitCount = this.mode === C.MODE_DIGIT ? 4 : 5;
         // Shifts exist only to UPPER and PUNCT, both with tokens size 5.
         token = TokenHelpers.add(token, ShiftTable.SHIFT_TABLE[this.mode][mode], thisModeBitCount);
         token = TokenHelpers.add(token, value, 5);
@@ -86,12 +86,12 @@ export default /*final*/ class State {
         let bitCount = this.bitCount;
         if (this.mode === C.MODE_PUNCT || this.mode === C.MODE_DIGIT) {
             // assert binaryShiftByteCount === 0;
-            let latch = LatchTable.LATCH_TABLE[mode][C.MODE_UPPER];
+            const latch = LatchTable.LATCH_TABLE[mode][C.MODE_UPPER];
             token = TokenHelpers.add(token, latch & 0xffff, latch >> 16);
             bitCount += latch >> 16;
             mode = C.MODE_UPPER;
         }
-        let deltaBitCount = this.binaryShiftByteCount === 0 || this.binaryShiftByteCount === 31
+        const deltaBitCount = this.binaryShiftByteCount === 0 || this.binaryShiftByteCount === 31
             ? 18
             : this.binaryShiftByteCount === 62
                 ? 9
@@ -134,11 +134,11 @@ export default /*final*/ class State {
     toBitArray(text) {
         // Reverse the tokens, so that they are in the order that they should
         // be output
-        let symbols = [];
+        const symbols = [];
         for (let token = this.endBinaryShift(text.length).token; token !== null; token = token.getPrevious()) {
             symbols.unshift(token);
         }
-        let bitArray = new BitArray();
+        const bitArray = new BitArray();
         // Add each token to the result.
         for (const symbol of symbols) {
             symbol.appendTo(bitArray, text);

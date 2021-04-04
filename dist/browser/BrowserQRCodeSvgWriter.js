@@ -47,7 +47,7 @@ class BrowserQRCodeSvgWriter {
         }
         const svgElement = this.write(contents, width, height, hints);
         if (containerElement)
-            containerElement.appendChild(svgElement);
+            {containerElement.appendChild(svgElement);}
     }
     /**
      * Note that the input matrix uses 0 == white, 1 == black.

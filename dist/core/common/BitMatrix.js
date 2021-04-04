@@ -465,7 +465,7 @@ export default class BitMatrix /*implements Cloneable*/ {
         return this.buildToString(setString, unsetString, lineSeparator);
     }
     buildToString(setString, unsetString, lineSeparator) {
-        let result = new StringBuilder();
+        const result = new StringBuilder();
         // result.append(lineSeparator);
         for (let y = 0, height = this.height; y < height; y++) {
             for (let x = 0, width = this.width; x < width; x++) {

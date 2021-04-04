@@ -5,7 +5,7 @@ export default class AnyAIDecoder extends AbstractExpandedDecoder {
         super(information);
     }
     parseInformation() {
-        let buf = new StringBuilder();
+        const buf = new StringBuilder();
         return this.getGeneralDecoder().decodeAllCodes(buf, AnyAIDecoder.HEADER_SIZE);
     }
 }

@@ -11,7 +11,7 @@ export default class AI013x0x1xDecoder extends AI01weightDecoder {
         if (this.getInformation().getSize() != AI013x0x1xDecoder.HEADER_SIZE + AI013x0x1xDecoder.GTIN_SIZE + AI013x0x1xDecoder.WEIGHT_SIZE + AI013x0x1xDecoder.DATE_SIZE) {
             throw new NotFoundException();
         }
-        let buf = new StringBuilder();
+        const buf = new StringBuilder();
         this.encodeCompressedGtin(buf, AI013x0x1xDecoder.HEADER_SIZE);
         this.encodeCompressedWeight(buf, AI013x0x1xDecoder.HEADER_SIZE + AI013x0x1xDecoder.GTIN_SIZE, AI013x0x1xDecoder.WEIGHT_SIZE);
         this.encodeCompressedDate(buf, AI013x0x1xDecoder.HEADER_SIZE + AI013x0x1xDecoder.GTIN_SIZE + AI013x0x1xDecoder.WEIGHT_SIZE);
@@ -25,11 +25,11 @@ export default class AI013x0x1xDecoder extends AI01weightDecoder {
         buf.append('(');
         buf.append(this.dateCode);
         buf.append(')');
-        let day = numericDate % 32;
+        const day = numericDate % 32;
         numericDate /= 32;
-        let month = numericDate % 12 + 1;
+        const month = numericDate % 12 + 1;
         numericDate /= 12;
-        let year = numericDate;
+        const year = numericDate;
         if (year / 10 == 0) {
             buf.append('0');
         }

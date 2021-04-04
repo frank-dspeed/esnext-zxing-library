@@ -219,9 +219,9 @@ export default /*public*/ /*final*/ class Detector {
         }
         let x = patternStart;
         let counterPosition = 0;
-        let patternLength = pattern.length;
+        const patternLength = pattern.length;
         for (let isWhite = whiteFirst; x < width; x++) {
-            let pixel = matrix.get(x, row);
+            const pixel = matrix.get(x, row);
             if (pixel !== isWhite) {
                 counters[counterPosition]++;
             }
@@ -261,7 +261,7 @@ export default /*public*/ /*final*/ class Detector {
      * @return ratio of total variance between counters and pattern compared to total pattern size
      */
     static patternMatchVariance(counters, pattern, maxIndividualVariance) {
-        let numCounters = counters.length;
+        const numCounters = counters.length;
         let total = 0;
         let patternLength = 0;
         for (let i = 0; i < numCounters; i++) {
@@ -276,13 +276,13 @@ export default /*public*/ /*final*/ class Detector {
         // We're going to fake floating-point math in integers. We just need to use more bits.
         // Scale up patternLength so that intermediate values below like scaledCounter will have
         // more "significant digits".
-        let unitBarWidth = total / patternLength;
+        const unitBarWidth = total / patternLength;
         maxIndividualVariance *= unitBarWidth;
         let totalVariance = 0.0;
         for (let x = 0; x < numCounters; x++) {
-            let counter = counters[x];
-            let scaledPattern = pattern[x] * unitBarWidth;
-            let variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
+            const counter = counters[x];
+            const scaledPattern = pattern[x] * unitBarWidth;
+            const variance = counter > scaledPattern ? counter - scaledPattern : scaledPattern - counter;
             if (variance > maxIndividualVariance) {
                 return /*Float.POSITIVE_INFINITY*/ Infinity;
             }

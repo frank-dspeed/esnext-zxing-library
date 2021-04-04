@@ -36,7 +36,7 @@ export default class ExpandedPair {
     }
     hashCode() {
         // return ExpandedPair.hashNotNull(leftChar) ^ hashNotNull(rightChar) ^ hashNotNull(finderPattern);
-        let value = this.leftchar.getValue() ^ this.rightchar.getValue() ^ this.finderpattern.getValue();
+        const value = this.leftchar.getValue() ^ this.rightchar.getValue() ^ this.finderpattern.getValue();
         return value;
     }
 }

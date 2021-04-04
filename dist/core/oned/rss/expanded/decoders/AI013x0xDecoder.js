@@ -9,7 +9,7 @@ export default class AI013x0xDecoder extends AI01weightDecoder {
         if (this.getInformation().getSize() != AI013x0xDecoder.HEADER_SIZE + AI01weightDecoder.GTIN_SIZE + AI013x0xDecoder.WEIGHT_SIZE) {
             throw new NotFoundException();
         }
-        let buf = new StringBuilder();
+        const buf = new StringBuilder();
         this.encodeCompressedGtin(buf, AI013x0xDecoder.HEADER_SIZE);
         this.encodeCompressedWeight(buf, AI013x0xDecoder.HEADER_SIZE + AI01weightDecoder.GTIN_SIZE, AI013x0xDecoder.WEIGHT_SIZE);
         return buf.toString();

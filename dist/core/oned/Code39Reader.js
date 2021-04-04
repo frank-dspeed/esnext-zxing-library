@@ -63,25 +63,25 @@ export default class Code39Reader extends OneDReader {
         this.counters = new Int32Array(9);
     }
     decodeRow(rowNumber, row, hints) {
-        let theCounters = this.counters;
+        const theCounters = this.counters;
         theCounters.fill(0);
         this.decodeRowResult = '';
-        let start = Code39Reader.findAsteriskPattern(row, theCounters);
+        const start = Code39Reader.findAsteriskPattern(row, theCounters);
         // Read off white space
         let nextStart = row.getNextSet(start[1]);
-        let end = row.getSize();
+        const end = row.getSize();
         let decodedChar;
         let lastStart;
         do {
             Code39Reader.recordPattern(row, nextStart, theCounters);
-            let pattern = Code39Reader.toNarrowWidePattern(theCounters);
+            const pattern = Code39Reader.toNarrowWidePattern(theCounters);
             if (pattern < 0) {
                 throw new NotFoundException();
             }
             decodedChar = Code39Reader.patternToChar(pattern);
             this.decodeRowResult += decodedChar;
             lastStart = nextStart;
-            for (let counter of theCounters) {
+            for (const counter of theCounters) {
                 nextStart += counter;
             }
             // Read off white space
@@ -90,17 +90,17 @@ export default class Code39Reader extends OneDReader {
         this.decodeRowResult = this.decodeRowResult.substring(0, this.decodeRowResult.length - 1); // remove asterisk
         // Look for whitespace after pattern:
         let lastPatternSize = 0;
-        for (let counter of theCounters) {
+        for (const counter of theCounters) {
             lastPatternSize += counter;
         }
-        let whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
+        const whiteSpaceAfterEnd = nextStart - lastStart - lastPatternSize;
         // If 50% of last pattern size, following last pattern, is not whitespace, fail
         // (but if it's whitespace to the very end of the image, that's OK)
         if (nextStart !== end && (whiteSpaceAfterEnd * 2) < lastPatternSize) {
             throw new NotFoundException();
         }
         if (this.usingCheckDigit) {
-            let max = this.decodeRowResult.length - 1;
+            const max = this.decodeRowResult.length - 1;
             let total = 0;
             for (let i = 0; i < max; i++) {
                 total += Code39Reader.ALPHABET_STRING.indexOf(this.decodeRowResult.charAt(i));
@@ -121,17 +121,17 @@ export default class Code39Reader extends OneDReader {
         else {
             resultString = this.decodeRowResult;
         }
-        let left = (start[1] + start[0]) / 2.0;
-        let right = lastStart + lastPatternSize / 2.0;
+        const left = (start[1] + start[0]) / 2.0;
+        const right = lastStart + lastPatternSize / 2.0;
         return new Result(resultString, null, 0, [new ResultPoint(left, rowNumber), new ResultPoint(right, rowNumber)], BarcodeFormat.CODE_39, new Date().getTime());
     }
     static findAsteriskPattern(row, counters) {
-        let width = row.getSize();
-        let rowOffset = row.getNextSet(0);
+        const width = row.getSize();
+        const rowOffset = row.getNextSet(0);
         let counterPosition = 0;
         let patternStart = rowOffset;
         let isWhite = false;
-        let patternLength = counters.length;
+        const patternLength = counters.length;
         for (let i = rowOffset; i < width; i++) {
             if (row.get(i) !== isWhite) {
                 counters[counterPosition]++;
@@ -161,12 +161,12 @@ export default class Code39Reader extends OneDReader {
     // For efficiency, returns -1 on failure. Not throwing here saved as many as 700 exceptions
     // per image when using some of our blackbox images.
     static toNarrowWidePattern(counters) {
-        let numCounters = counters.length;
+        const numCounters = counters.length;
         let maxNarrowCounter = 0;
         let wideCounters;
         do {
             let minCounter = 0x7fffffff;
-            for (let counter of counters) {
+            for (const counter of counters) {
                 if (counter < minCounter && counter > maxNarrowCounter) {
                     minCounter = counter;
                 }
@@ -176,7 +176,7 @@ export default class Code39Reader extends OneDReader {
             let totalWideCountersWidth = 0;
             let pattern = 0;
             for (let i = 0; i < numCounters; i++) {
-                let counter = counters[i];
+                const counter = counters[i];
                 if (counter > maxNarrowCounter) {
                     pattern |= 1 << (numCounters - 1 - i);
                     wideCounters++;
@@ -188,7 +188,7 @@ export default class Code39Reader extends OneDReader {
                 // We can perform a cheap, conservative check to see if any individual
                 // counter is more than 1.5 times the average:
                 for (let i = 0; i < numCounters && wideCounters > 0; i++) {
-                    let counter = counters[i];
+                    const counter = counters[i];
                     if (counter > maxNarrowCounter) {
                         wideCounters--;
                         // totalWideCountersWidth = 3 * average, so this checks if counter >= 3/2 * average
@@ -214,12 +214,12 @@ export default class Code39Reader extends OneDReader {
         throw new NotFoundException();
     }
     static decodeExtended(encoded) {
-        let length = encoded.length;
+        const length = encoded.length;
         let decoded = '';
         for (let i = 0; i < length; i++) {
-            let c = encoded.charAt(i);
+            const c = encoded.charAt(i);
             if (c === '+' || c === '$' || c === '%' || c === '/') {
-                let next = encoded.charAt(i + 1);
+                const next = encoded.charAt(i + 1);
                 let decodedChar = '\0';
                 switch (c) {
                     case '+':

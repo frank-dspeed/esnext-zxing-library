@@ -85,7 +85,7 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
     ensureCapacity(minCapacity) {
         // overflow-conscious code
         if (minCapacity - this.buf.length > 0)
-            this.grow(minCapacity);
+            {this.grow(minCapacity);}
     }
     /**
      * Increases the capacity to ensure that it can hold at least the
@@ -95,13 +95,13 @@ export default /*public*/ class ByteArrayOutputStream extends OutputStream {
      */
     grow(minCapacity) {
         // overflow-conscious code
-        let oldCapacity = this.buf.length;
+        const oldCapacity = this.buf.length;
         let newCapacity = oldCapacity << 1;
         if (newCapacity - minCapacity < 0)
-            newCapacity = minCapacity;
+            {newCapacity = minCapacity;}
         if (newCapacity < 0) {
             if (minCapacity < 0) // overflow
-                throw new OutOfMemoryError();
+                {throw new OutOfMemoryError();}
             newCapacity = Integer.MAX_VALUE;
         }
         this.buf = Arrays.copyOfUint8Array(this.buf, newCapacity);

@@ -88,7 +88,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
             if (detectionResult == null) {
                 throw NotFoundException.getNotFoundInstance();
             }
-            let resultBox = detectionResult.getBoundingBox();
+            const resultBox = detectionResult.getBoundingBox();
             if (firstPass && resultBox != null &&
                 (resultBox.getMinY() < boundingBox.getMinY() || resultBox.getMaxY() > boundingBox.getMaxY())) {
                 boundingBox = resultBox;
@@ -98,12 +98,12 @@ export default /*public final*/ class PDF417ScanningDecoder {
             }
         }
         detectionResult.setBoundingBox(boundingBox);
-        let maxBarcodeColumn = detectionResult.getBarcodeColumnCount() + 1;
+        const maxBarcodeColumn = detectionResult.getBarcodeColumnCount() + 1;
         detectionResult.setDetectionResultColumn(0, leftRowIndicatorColumn);
         detectionResult.setDetectionResultColumn(maxBarcodeColumn, rightRowIndicatorColumn);
-        let leftToRight = leftRowIndicatorColumn != null;
+        const leftToRight = leftRowIndicatorColumn != null;
         for (let barcodeColumnCount /*int*/ = 1; barcodeColumnCount <= maxBarcodeColumn; barcodeColumnCount++) {
-            let barcodeColumn = leftToRight ? barcodeColumnCount : maxBarcodeColumn - barcodeColumnCount;
+            const barcodeColumn = leftToRight ? barcodeColumnCount : maxBarcodeColumn - barcodeColumnCount;
             if (detectionResult.getDetectionResultColumn(barcodeColumn) !== /* null */ undefined) {
                 // This will be the case for the opposite row indicator column, which doesn't need to be decoded again.
                 continue;
@@ -127,7 +127,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
                     }
                     startColumn = previousStartColumn;
                 }
-                let codeword = PDF417ScanningDecoder.detectCodeword(image, boundingBox.getMinX(), boundingBox.getMaxX(), leftToRight, startColumn, imageRow, minCodewordWidth, maxCodewordWidth);
+                const codeword = PDF417ScanningDecoder.detectCodeword(image, boundingBox.getMinX(), boundingBox.getMaxX(), leftToRight, startColumn, imageRow, minCodewordWidth, maxCodewordWidth);
                 if (codeword != null) {
                     detectionResultColumn.setCodeword(imageRow, codeword);
                     previousStartColumn = startColumn;
@@ -149,11 +149,11 @@ export default /*public final*/ class PDF417ScanningDecoder {
         if (leftRowIndicatorColumn == null && rightRowIndicatorColumn == null) {
             return null;
         }
-        let barcodeMetadata = PDF417ScanningDecoder.getBarcodeMetadata(leftRowIndicatorColumn, rightRowIndicatorColumn);
+        const barcodeMetadata = PDF417ScanningDecoder.getBarcodeMetadata(leftRowIndicatorColumn, rightRowIndicatorColumn);
         if (barcodeMetadata == null) {
             return null;
         }
-        let boundingBox = BoundingBox.merge(PDF417ScanningDecoder.adjustBoundingBox(leftRowIndicatorColumn), PDF417ScanningDecoder.adjustBoundingBox(rightRowIndicatorColumn));
+        const boundingBox = BoundingBox.merge(PDF417ScanningDecoder.adjustBoundingBox(leftRowIndicatorColumn), PDF417ScanningDecoder.adjustBoundingBox(rightRowIndicatorColumn));
         return new DetectionResult(barcodeMetadata, boundingBox);
     }
     /**
@@ -166,19 +166,19 @@ export default /*public final*/ class PDF417ScanningDecoder {
         if (rowIndicatorColumn == null) {
             return null;
         }
-        let rowHeights = rowIndicatorColumn.getRowHeights();
+        const rowHeights = rowIndicatorColumn.getRowHeights();
         if (rowHeights == null) {
             return null;
         }
-        let maxRowHeight = PDF417ScanningDecoder.getMax(rowHeights);
+        const maxRowHeight = PDF417ScanningDecoder.getMax(rowHeights);
         let missingStartRows = 0;
-        for (let rowHeight /*int*/ of rowHeights) {
+        for (const rowHeight /*int*/ of rowHeights) {
             missingStartRows += maxRowHeight - rowHeight;
             if (rowHeight > 0) {
                 break;
             }
         }
-        let codewords = rowIndicatorColumn.getCodewords();
+        const codewords = rowIndicatorColumn.getCodewords();
         for (let row /*int*/ = 0; missingStartRows > 0 && codewords[row] == null; row++) {
             missingStartRows--;
         }
@@ -196,7 +196,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
     }
     static getMax(values) {
         let maxValue = -1;
-        for (let value /*int*/ of values) {
+        for (const value /*int*/ of values) {
             maxValue = Math.max(maxValue, value);
         }
         return maxValue;
@@ -220,13 +220,13 @@ export default /*public final*/ class PDF417ScanningDecoder {
         return leftBarcodeMetadata;
     }
     static getRowIndicatorColumn(image, boundingBox, startPoint, leftToRight, minCodewordWidth, maxCodewordWidth) {
-        let rowIndicatorColumn = new DetectionResultRowIndicatorColumn(boundingBox, leftToRight);
+        const rowIndicatorColumn = new DetectionResultRowIndicatorColumn(boundingBox, leftToRight);
         for (let i /*int*/ = 0; i < 2; i++) {
-            let increment = i === 0 ? 1 : -1;
+            const increment = i === 0 ? 1 : -1;
             let startColumn = Math.trunc(Math.trunc(startPoint.getX()));
             for (let imageRow /*int*/ = Math.trunc(Math.trunc(startPoint.getY())); imageRow <= boundingBox.getMaxY() &&
                 imageRow >= boundingBox.getMinY(); imageRow += increment) {
-                let codeword = PDF417ScanningDecoder.detectCodeword(image, 0, image.getWidth(), leftToRight, startColumn, imageRow, minCodewordWidth, maxCodewordWidth);
+                const codeword = PDF417ScanningDecoder.detectCodeword(image, 0, image.getWidth(), leftToRight, startColumn, imageRow, minCodewordWidth, maxCodewordWidth);
                 if (codeword != null) {
                     rowIndicatorColumn.setCodeword(imageRow, codeword);
                     if (leftToRight) {
@@ -251,9 +251,9 @@ export default /*public final*/ class PDF417ScanningDecoder {
      * @throws NotFoundException
      */
     static adjustCodewordCount(detectionResult, barcodeMatrix) {
-        let barcodeMatrix01 = barcodeMatrix[0][1];
-        let numberOfCodewords = barcodeMatrix01.getValue();
-        let calculatedNumberOfCodewords = detectionResult.getBarcodeColumnCount() *
+        const barcodeMatrix01 = barcodeMatrix[0][1];
+        const numberOfCodewords = barcodeMatrix01.getValue();
+        const calculatedNumberOfCodewords = detectionResult.getBarcodeColumnCount() *
             detectionResult.getBarcodeRowCount() -
             PDF417ScanningDecoder.getNumberOfECCodeWords(detectionResult.getBarcodeECLevel());
         if (numberOfCodewords.length === 0) {
@@ -276,16 +276,16 @@ export default /*public final*/ class PDF417ScanningDecoder {
      * @throws NotFoundException
      */
     static createDecoderResult(detectionResult) {
-        let barcodeMatrix = PDF417ScanningDecoder.createBarcodeMatrix(detectionResult);
+        const barcodeMatrix = PDF417ScanningDecoder.createBarcodeMatrix(detectionResult);
         PDF417ScanningDecoder.adjustCodewordCount(detectionResult, barcodeMatrix);
-        let erasures /*Collection<Integer>*/ = new Array();
-        let codewords = new Int32Array(detectionResult.getBarcodeRowCount() * detectionResult.getBarcodeColumnCount());
-        let ambiguousIndexValuesList = /*List<int[]>*/ [];
-        let ambiguousIndexesList = /*Collection<Integer>*/ new Array();
+        const erasures /*Collection<Integer>*/ = new Array();
+        const codewords = new Int32Array(detectionResult.getBarcodeRowCount() * detectionResult.getBarcodeColumnCount());
+        const ambiguousIndexValuesList = /*List<int[]>*/ [];
+        const ambiguousIndexesList = /*Collection<Integer>*/ new Array();
         for (let row /*int*/ = 0; row < detectionResult.getBarcodeRowCount(); row++) {
             for (let column /*int*/ = 0; column < detectionResult.getBarcodeColumnCount(); column++) {
-                let values = barcodeMatrix[row][column + 1].getValue();
-                let codewordIndex = row * detectionResult.getBarcodeColumnCount() + column;
+                const values = barcodeMatrix[row][column + 1].getValue();
+                const codewordIndex = row * detectionResult.getBarcodeColumnCount() + column;
                 if (values.length === 0) {
                     erasures.push(codewordIndex);
                 }
@@ -298,7 +298,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
                 }
             }
         }
-        let ambiguousIndexValues = new Array(ambiguousIndexValuesList.length);
+        const ambiguousIndexValues = new Array(ambiguousIndexValuesList.length);
         for (let i /*int*/ = 0; i < ambiguousIndexValues.length; i++) {
             ambiguousIndexValues[i] = ambiguousIndexValuesList[i];
         }
@@ -321,7 +321,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
      * @throws ChecksumException
      */
     static createDecoderResultFromAmbiguousValues(ecLevel, codewords, erasureArray, ambiguousIndexes, ambiguousIndexValues) {
-        let ambiguousIndexCount = new Int32Array(ambiguousIndexes.length);
+        const ambiguousIndexCount = new Int32Array(ambiguousIndexes.length);
         let tries = 100;
         while (tries-- > 0) {
             for (let i /*int*/ = 0; i < ambiguousIndexCount.length; i++) {
@@ -331,7 +331,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
                 return PDF417ScanningDecoder.decodeCodewords(codewords, ecLevel, erasureArray);
             }
             catch (err) {
-                let ignored = err instanceof ChecksumException;
+                const ignored = err instanceof ChecksumException;
                 if (!ignored) {
                     throw err;
                 }
@@ -357,18 +357,18 @@ export default /*public final*/ class PDF417ScanningDecoder {
     static createBarcodeMatrix(detectionResult) {
         // let barcodeMatrix: BarcodeValue[][] =
         // new BarcodeValue[detectionResult.getBarcodeRowCount()][detectionResult.getBarcodeColumnCount() + 2];
-        let barcodeMatrix = Array.from({ length: detectionResult.getBarcodeRowCount() }, () => new Array(detectionResult.getBarcodeColumnCount() + 2));
+        const barcodeMatrix = Array.from({ length: detectionResult.getBarcodeRowCount() }, () => new Array(detectionResult.getBarcodeColumnCount() + 2));
         for (let row /*int*/ = 0; row < barcodeMatrix.length; row++) {
             for (let column /*int*/ = 0; column < barcodeMatrix[row].length; column++) {
                 barcodeMatrix[row][column] = new BarcodeValue();
             }
         }
         let column = 0;
-        for (let detectionResultColumn /*DetectionResultColumn*/ of detectionResult.getDetectionResultColumns()) {
+        for (const detectionResultColumn /*DetectionResultColumn*/ of detectionResult.getDetectionResultColumns()) {
             if (detectionResultColumn != null) {
-                for (let codeword /*Codeword*/ of detectionResultColumn.getCodewords()) {
+                for (const codeword /*Codeword*/ of detectionResultColumn.getCodewords()) {
                     if (codeword != null) {
-                        let rowNumber = codeword.getRowNumber();
+                        const rowNumber = codeword.getRowNumber();
                         if (rowNumber >= 0) {
                             if (rowNumber >= barcodeMatrix.length) {
                                 // We have more rows than the barcode metadata allows for, ignore them.
@@ -387,7 +387,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
         return barcodeColumn >= 0 && barcodeColumn <= detectionResult.getBarcodeColumnCount() + 1;
     }
     static getStartColumn(detectionResult, barcodeColumn, imageRow, leftToRight) {
-        let offset = leftToRight ? 1 : -1;
+        const offset = leftToRight ? 1 : -1;
         let codeword = null;
         if (PDF417ScanningDecoder.isValidBarcodeColumn(detectionResult, barcodeColumn - offset)) {
             codeword = detectionResult.getDetectionResultColumn(barcodeColumn - offset).getCodeword(imageRow);
@@ -408,7 +408,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
         let skippedColumns = 0;
         while (PDF417ScanningDecoder.isValidBarcodeColumn(detectionResult, barcodeColumn - offset)) {
             barcodeColumn -= offset;
-            for (let previousRowCodeword /*Codeword*/ of detectionResult.getDetectionResultColumn(barcodeColumn).getCodewords()) {
+            for (const previousRowCodeword /*Codeword*/ of detectionResult.getDetectionResultColumn(barcodeColumn).getCodewords()) {
                 if (previousRowCodeword != null) {
                     return (leftToRight ? previousRowCodeword.getEndX() : previousRowCodeword.getStartX()) +
                         offset *
@@ -426,18 +426,18 @@ export default /*public final*/ class PDF417ScanningDecoder {
         // and try to adjust the read pixels, e.g. remove single pixel errors or try to cut off exceeding pixels.
         // min and maxCodewordWidth should not be used as they are calculated for the whole barcode an can be inaccurate
         // for the current position
-        let moduleBitCount = PDF417ScanningDecoder.getModuleBitCount(image, minColumn, maxColumn, leftToRight, startColumn, imageRow);
+        const moduleBitCount = PDF417ScanningDecoder.getModuleBitCount(image, minColumn, maxColumn, leftToRight, startColumn, imageRow);
         if (moduleBitCount == null) {
             return null;
         }
         let endColumn;
-        let codewordBitCount = MathUtils.sum(moduleBitCount);
+        const codewordBitCount = MathUtils.sum(moduleBitCount);
         if (leftToRight) {
             endColumn = startColumn + codewordBitCount;
         }
         else {
             for (let i /*int*/ = 0; i < moduleBitCount.length / 2; i++) {
-                let tmpCount = moduleBitCount[i];
+                const tmpCount = moduleBitCount[i];
                 moduleBitCount[i] = moduleBitCount[moduleBitCount.length - 1 - i];
                 moduleBitCount[moduleBitCount.length - 1 - i] = tmpCount;
             }
@@ -462,8 +462,8 @@ export default /*public final*/ class PDF417ScanningDecoder {
             // create the bit count from it and normalize it to 8. This would help with single pixel errors.
             return null;
         }
-        let decodedValue = PDF417CodewordDecoder.getDecodedValue(moduleBitCount);
-        let codeword = PDF417Common.getCodeword(decodedValue);
+        const decodedValue = PDF417CodewordDecoder.getDecodedValue(moduleBitCount);
+        const codeword = PDF417Common.getCodeword(decodedValue);
         if (codeword === -1) {
             return null;
         }
@@ -471,9 +471,9 @@ export default /*public final*/ class PDF417ScanningDecoder {
     }
     static getModuleBitCount(image, minColumn, maxColumn, leftToRight, startColumn, imageRow) {
         let imageColumn = startColumn;
-        let moduleBitCount = new Int32Array(8);
+        const moduleBitCount = new Int32Array(8);
         let moduleNumber = 0;
-        let increment = leftToRight ? 1 : -1;
+        const increment = leftToRight ? 1 : -1;
         let previousPixelValue = leftToRight;
         while ((leftToRight ? imageColumn < maxColumn : imageColumn >= minColumn) &&
             moduleNumber < moduleBitCount.length) {
@@ -525,11 +525,11 @@ export default /*public final*/ class PDF417ScanningDecoder {
         if (codewords.length === 0) {
             throw FormatException.getFormatInstance();
         }
-        let numECCodewords = 1 << (ecLevel + 1);
-        let correctedErrorsCount = PDF417ScanningDecoder.correctErrors(codewords, erasures, numECCodewords);
+        const numECCodewords = 1 << (ecLevel + 1);
+        const correctedErrorsCount = PDF417ScanningDecoder.correctErrors(codewords, erasures, numECCodewords);
         PDF417ScanningDecoder.verifyCodewordCount(codewords, numECCodewords);
         // Decode the codewords
-        let decoderResult = DecodedBitStreamParser.decode(codewords, '' + ecLevel);
+        const decoderResult = DecodedBitStreamParser.decode(codewords, '' + ecLevel);
         decoderResult.setErrorsCorrected(correctedErrorsCount);
         decoderResult.setErasures(erasures.length);
         return decoderResult;
@@ -566,7 +566,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
         // The first codeword, the Symbol Length Descriptor, shall always encode the total number of data
         // codewords in the symbol, including the Symbol Length Descriptor itself, data codewords and pad
         // codewords, but excluding the number of error correction codewords.
-        let numberOfCodewords = codewords[0];
+        const numberOfCodewords = codewords[0];
         if (numberOfCodewords > codewords.length) {
             throw FormatException.getFormatInstance();
         }
@@ -581,7 +581,7 @@ export default /*public final*/ class PDF417ScanningDecoder {
         }
     }
     static getBitCountForCodeword(codeword) {
-        let result = new Int32Array(8);
+        const result = new Int32Array(8);
         let previousValue = 0;
         let i = result.length - 1;
         while (true) {
@@ -610,12 +610,12 @@ export default /*public final*/ class PDF417ScanningDecoder {
         return (moduleBitCount[0] - moduleBitCount[2] + moduleBitCount[4] - moduleBitCount[6] + 9) % 9;
     }
     static toString(barcodeMatrix) {
-        let formatter = new Formatter();
+        const formatter = new Formatter();
         // try (let formatter = new Formatter()) {
         for (let row /*int*/ = 0; row < barcodeMatrix.length; row++) {
             formatter.format('Row %2d: ', row);
             for (let column /*int*/ = 0; column < barcodeMatrix[row].length; column++) {
-                let barcodeValue = barcodeMatrix[row][column];
+                const barcodeValue = barcodeMatrix[row][column];
                 if (barcodeValue.getValue().length === 0) {
                     formatter.format('        ', null);
                 }

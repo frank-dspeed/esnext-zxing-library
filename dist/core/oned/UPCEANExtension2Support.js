@@ -28,33 +28,33 @@ export default class UPCEANExtension2Support {
         this.decodeRowStringBuffer = '';
     }
     decodeRow(rowNumber, row, extensionStartRange) {
-        let result = this.decodeRowStringBuffer;
-        let end = this.decodeMiddle(row, extensionStartRange, result);
-        let resultString = result.toString();
-        let extensionData = UPCEANExtension2Support.parseExtensionString(resultString);
-        let resultPoints = [
+        const result = this.decodeRowStringBuffer;
+        const end = this.decodeMiddle(row, extensionStartRange, result);
+        const resultString = result.toString();
+        const extensionData = UPCEANExtension2Support.parseExtensionString(resultString);
+        const resultPoints = [
             new ResultPoint((extensionStartRange[0] + extensionStartRange[1]) / 2.0, rowNumber),
             new ResultPoint(end, rowNumber)
         ];
-        let extensionResult = new Result(resultString, null, 0, resultPoints, BarcodeFormat.UPC_EAN_EXTENSION, new Date().getTime());
+        const extensionResult = new Result(resultString, null, 0, resultPoints, BarcodeFormat.UPC_EAN_EXTENSION, new Date().getTime());
         if (extensionData != null) {
             extensionResult.putAllMetadata(extensionData);
         }
         return extensionResult;
     }
     decodeMiddle(row, startRange, resultString) {
-        let counters = this.decodeMiddleCounters;
+        const counters = this.decodeMiddleCounters;
         counters[0] = 0;
         counters[1] = 0;
         counters[2] = 0;
         counters[3] = 0;
-        let end = row.getSize();
+        const end = row.getSize();
         let rowOffset = startRange[1];
         let checkParity = 0;
         for (let x = 0; x < 2 && rowOffset < end; x++) {
-            let bestMatch = AbstractUPCEANReader.decodeDigit(row, counters, rowOffset, AbstractUPCEANReader.L_AND_G_PATTERNS);
+            const bestMatch = AbstractUPCEANReader.decodeDigit(row, counters, rowOffset, AbstractUPCEANReader.L_AND_G_PATTERNS);
             resultString += String.fromCharCode(('0'.charCodeAt(0) + bestMatch % 10));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
             if (bestMatch >= 10) {

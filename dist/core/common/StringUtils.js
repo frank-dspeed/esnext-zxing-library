@@ -212,11 +212,11 @@ export default class StringUtils {
         let i = -1;
         function callback(exp, p0, p1, p2, p3, p4) {
             if (exp === '%%')
-                return '%';
+                {return '%';}
             if (args[++i] === undefined)
-                return undefined;
+                {return undefined;}
             exp = p2 ? parseInt(p2.substr(1)) : undefined;
-            let base = p3 ? parseInt(p3.substr(1)) : undefined;
+            const base = p3 ? parseInt(p3.substr(1)) : undefined;
             let val;
             switch (p4) {
                 case 's':
@@ -242,13 +242,13 @@ export default class StringUtils {
                     break;
             }
             val = typeof val === 'object' ? JSON.stringify(val) : (+val).toString(base);
-            let size = parseInt(p1); /* padding size */
-            let ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
+            const size = parseInt(p1); /* padding size */
+            const ch = p1 && (p1[0] + '') === '0' ? '0' : ' '; /* isnull? */
             while (val.length < size)
-                val = p0 !== undefined ? val + ch : ch + val; /* isminus? */
+                {val = p0 !== undefined ? val + ch : ch + val;} /* isminus? */
             return val;
         }
-        let regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
+        const regex = /%(-)?(0?[0-9]+)?([.][0-9]+)?([#][0-9]+)?([scfpexd%])/g;
         return append.replace(regex, callback);
     }
     /**

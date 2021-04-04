@@ -54,7 +54,7 @@ export default /* final */ class UPCEReader extends UPCEANReader {
         for (let x = 0; x < 6 && rowOffset < end; x++) {
             const bestMatch = UPCEReader.decodeDigit(row, counters, rowOffset, UPCEReader.L_AND_G_PATTERNS);
             result += String.fromCharCode(('0'.charCodeAt(0) + bestMatch % 10));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
             if (bestMatch >= 10) {
@@ -108,7 +108,7 @@ export default /* final */ class UPCEReader extends UPCEANReader {
         const upceChars = upce.slice(1, 7).split('').map(x => x.charCodeAt(0));
         const result = new StringBuilder( /*12*/);
         result.append(upce.charAt(0));
-        let lastChar = upceChars[5];
+        const lastChar = upceChars[5];
         switch (lastChar) {
             case 0:
             case 1:

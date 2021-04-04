@@ -60,12 +60,12 @@ export default class Detector {
             // The matrix is square
             dimensionTop = dimensionRight = Math.max(dimensionTop, dimensionRight);
         }
-        let bits = Detector.sampleGrid(this.image, topLeft, bottomLeft, bottomRight, topRight, dimensionTop, dimensionRight);
+        const bits = Detector.sampleGrid(this.image, topLeft, bottomLeft, bottomRight, topRight, dimensionTop, dimensionRight);
         return new DetectorResult(bits, [topLeft, bottomLeft, bottomRight, topRight]);
     }
     static shiftPoint(point, to, div) {
-        let x = (to.getX() - point.getX()) / (div + 1);
-        let y = (to.getY() - point.getY()) / (div + 1);
+        const x = (to.getX() - point.getX()) / (div + 1);
+        const y = (to.getY() - point.getY()) / (div + 1);
         return new ResultPoint(point.getX() + x, point.getY() + y);
     }
     static moveAway(point, fromX, fromY) {
@@ -91,19 +91,19 @@ export default class Detector {
     detectSolid1(cornerPoints) {
         // 0  2
         // 1  3
-        let pointA = cornerPoints[0];
-        let pointB = cornerPoints[1];
-        let pointC = cornerPoints[3];
-        let pointD = cornerPoints[2];
-        let trAB = this.transitionsBetween(pointA, pointB);
-        let trBC = this.transitionsBetween(pointB, pointC);
-        let trCD = this.transitionsBetween(pointC, pointD);
-        let trDA = this.transitionsBetween(pointD, pointA);
+        const pointA = cornerPoints[0];
+        const pointB = cornerPoints[1];
+        const pointC = cornerPoints[3];
+        const pointD = cornerPoints[2];
+        const trAB = this.transitionsBetween(pointA, pointB);
+        const trBC = this.transitionsBetween(pointB, pointC);
+        const trCD = this.transitionsBetween(pointC, pointD);
+        const trDA = this.transitionsBetween(pointD, pointA);
         // 0..3
         // :  :
         // 1--2
         let min = trAB;
-        let points = [pointD, pointA, pointB, pointC];
+        const points = [pointD, pointA, pointB, pointC];
         if (min > trBC) {
             min = trBC;
             points[0] = pointA;
@@ -133,17 +133,17 @@ export default class Detector {
         // A..D
         // :  :
         // B--C
-        let pointA = points[0];
-        let pointB = points[1];
-        let pointC = points[2];
-        let pointD = points[3];
+        const pointA = points[0];
+        const pointB = points[1];
+        const pointC = points[2];
+        const pointD = points[3];
         // Transition detection on the edge is not stable.
         // To safely detect, shift the points to the module center.
-        let tr = this.transitionsBetween(pointA, pointD);
-        let pointBs = Detector.shiftPoint(pointB, pointC, (tr + 1) * 4);
-        let pointCs = Detector.shiftPoint(pointC, pointB, (tr + 1) * 4);
-        let trBA = this.transitionsBetween(pointBs, pointA);
-        let trCD = this.transitionsBetween(pointCs, pointD);
+        const tr = this.transitionsBetween(pointA, pointD);
+        const pointBs = Detector.shiftPoint(pointB, pointC, (tr + 1) * 4);
+        const pointCs = Detector.shiftPoint(pointC, pointB, (tr + 1) * 4);
+        const trBA = this.transitionsBetween(pointBs, pointA);
+        const trCD = this.transitionsBetween(pointCs, pointD);
         // 0..3
         // |  :
         // 1--2
@@ -170,19 +170,19 @@ export default class Detector {
         // A..D
         // |  :
         // B--C
-        let pointA = points[0];
-        let pointB = points[1];
-        let pointC = points[2];
-        let pointD = points[3];
+        const pointA = points[0];
+        const pointB = points[1];
+        const pointC = points[2];
+        const pointD = points[3];
         // shift points for safe transition detection.
         let trTop = this.transitionsBetween(pointA, pointD);
         let trRight = this.transitionsBetween(pointB, pointD);
-        let pointAs = Detector.shiftPoint(pointA, pointB, (trRight + 1) * 4);
-        let pointCs = Detector.shiftPoint(pointC, pointB, (trTop + 1) * 4);
+        const pointAs = Detector.shiftPoint(pointA, pointB, (trRight + 1) * 4);
+        const pointCs = Detector.shiftPoint(pointC, pointB, (trTop + 1) * 4);
         trTop = this.transitionsBetween(pointAs, pointD);
         trRight = this.transitionsBetween(pointCs, pointD);
-        let candidate1 = new ResultPoint(pointD.getX() + (pointC.getX() - pointB.getX()) / (trTop + 1), pointD.getY() + (pointC.getY() - pointB.getY()) / (trTop + 1));
-        let candidate2 = new ResultPoint(pointD.getX() + (pointA.getX() - pointB.getX()) / (trRight + 1), pointD.getY() + (pointA.getY() - pointB.getY()) / (trRight + 1));
+        const candidate1 = new ResultPoint(pointD.getX() + (pointC.getX() - pointB.getX()) / (trTop + 1), pointD.getY() + (pointC.getY() - pointB.getY()) / (trTop + 1));
+        const candidate2 = new ResultPoint(pointD.getX() + (pointA.getX() - pointB.getX()) / (trRight + 1), pointD.getY() + (pointA.getY() - pointB.getY()) / (trRight + 1));
         if (!this.isValid(candidate1)) {
             if (this.isValid(candidate2)) {
                 return candidate2;
@@ -192,8 +192,8 @@ export default class Detector {
         if (!this.isValid(candidate2)) {
             return candidate1;
         }
-        let sumc1 = this.transitionsBetween(pointAs, candidate1) + this.transitionsBetween(pointCs, candidate1);
-        let sumc2 = this.transitionsBetween(pointAs, candidate2) + this.transitionsBetween(pointCs, candidate2);
+        const sumc1 = this.transitionsBetween(pointAs, candidate1) + this.transitionsBetween(pointCs, candidate1);
+        const sumc2 = this.transitionsBetween(pointAs, candidate2) + this.transitionsBetween(pointCs, candidate2);
         if (sumc1 > sumc2) {
             return candidate1;
         }
@@ -229,8 +229,8 @@ export default class Detector {
         }
         // WhiteRectangleDetector returns points inside of the rectangle.
         // I want points on the edges.
-        let centerX = (pointA.getX() + pointB.getX() + pointC.getX() + pointD.getX()) / 4;
-        let centerY = (pointA.getY() + pointB.getY() + pointC.getY() + pointD.getY()) / 4;
+        const centerX = (pointA.getX() + pointB.getX() + pointC.getX() + pointD.getX()) / 4;
+        const centerY = (pointA.getY() + pointB.getY() + pointC.getY() + pointD.getY()) / 4;
         pointA = Detector.moveAway(pointA, centerX, centerY);
         pointB = Detector.moveAway(pointB, centerX, centerY);
         pointC = Detector.moveAway(pointC, centerX, centerY);
@@ -264,7 +264,7 @@ export default class Detector {
         let fromY = Math.trunc(from.getY());
         let toX = Math.trunc(to.getX());
         let toY = Math.trunc(to.getY());
-        let steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
+        const steep = Math.abs(toY - fromY) > Math.abs(toX - fromX);
         if (steep) {
             let temp = fromX;
             fromX = fromY;
@@ -273,15 +273,15 @@ export default class Detector {
             toX = toY;
             toY = temp;
         }
-        let dx = Math.abs(toX - fromX);
-        let dy = Math.abs(toY - fromY);
+        const dx = Math.abs(toX - fromX);
+        const dy = Math.abs(toY - fromY);
         let error = -dx / 2;
-        let ystep = fromY < toY ? 1 : -1;
-        let xstep = fromX < toX ? 1 : -1;
+        const ystep = fromY < toY ? 1 : -1;
+        const xstep = fromX < toX ? 1 : -1;
         let transitions = 0;
         let inBlack = this.image.get(steep ? fromY : fromX, steep ? fromX : fromY);
         for (let x = fromX, y = fromY; x !== toX; x += xstep) {
-            let isBlack = this.image.get(steep ? y : x, steep ? x : y);
+            const isBlack = this.image.get(steep ? y : x, steep ? x : y);
             if (isBlack !== inBlack) {
                 transitions++;
                 inBlack = isBlack;

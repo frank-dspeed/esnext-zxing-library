@@ -6,10 +6,10 @@ export default class AI01AndOtherAIs extends AI01decoder {
         super(information);
     }
     parseInformation() {
-        let buff = new StringBuilder();
+        const buff = new StringBuilder();
         buff.append('(01)');
-        let initialGtinPosition = buff.length();
-        let firstGtinDigit = this.getGeneralDecoder().extractNumericValueFromBitArray(AI01AndOtherAIs.HEADER_SIZE, 4);
+        const initialGtinPosition = buff.length();
+        const firstGtinDigit = this.getGeneralDecoder().extractNumericValueFromBitArray(AI01AndOtherAIs.HEADER_SIZE, 4);
         buff.append(firstGtinDigit);
         this.encodeCompressedGtinWithoutAI(buff, AI01AndOtherAIs.HEADER_SIZE + 4, initialGtinPosition);
         return this.getGeneralDecoder().decodeAllCodes(buff, AI01AndOtherAIs.HEADER_SIZE + 44);

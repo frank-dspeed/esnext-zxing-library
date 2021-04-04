@@ -33,7 +33,7 @@ import Integer from '../../util/Integer';
 import Long from '../../util/Long';
 import ByteArrayOutputStream from '../../util/ByteArrayOutputStream';
 import StringEncoding from '../../util/StringEncoding';
-/*private*/ var Mode;
+/*private*/ let Mode;
 (function (Mode) {
     Mode[Mode["ALPHA"] = 0] = "ALPHA";
     Mode[Mode["LOWER"] = 1] = "LOWER";
@@ -80,9 +80,9 @@ function createBigInt(num) {
 }
 function getEXP900() {
     // in Java - array with length = 16
-    let EXP900 = [];
+    const EXP900 = [];
     EXP900[0] = createBigInt(1);
-    let nineHundred = createBigInt(900);
+    const nineHundred = createBigInt(900);
     EXP900[1] = nineHundred;
     // in Java - array with length = 16
     for (let i /*int*/ = 2; i < 16; i++) {
@@ -108,9 +108,9 @@ export default /*final*/ class DecodedBitStreamParser {
      */
     static decode(codewords, ecLevel) {
         // pass encoding to result (will be used for decode symbols in byte mode)
-        let result = new StringBuilder('');
+        const result = new StringBuilder('');
         // let encoding: Charset = StandardCharsets.ISO_8859_1;
-        let encoding = CharacterSetECI.ISO8859_1;
+        const encoding = CharacterSetECI.ISO8859_1;
         /**
          * @note the next command is specific from this TypeScript library
          * because TS can't properly cast some values to char and
@@ -122,7 +122,7 @@ export default /*final*/ class DecodedBitStreamParser {
         // Get compaction mode
         let codeIndex = 1;
         let code = codewords[codeIndex++];
-        let resultMetadata = new PDF417ResultMetadata();
+        const resultMetadata = new PDF417ResultMetadata();
         while (codeIndex < codewords[0]) {
             switch (code) {
                 case DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH:
@@ -139,7 +139,7 @@ export default /*final*/ class DecodedBitStreamParser {
                     codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex, result);
                     break;
                 case DecodedBitStreamParser.ECI_CHARSET:
-                    let charsetECI = CharacterSetECI.getCharacterSetECIByValue(codewords[codeIndex++]);
+                    const charsetECI = CharacterSetECI.getCharacterSetECIByValue(codewords[codeIndex++]);
                     // encoding = Charset.forName(charsetECI.getName());
                     break;
                 case DecodedBitStreamParser.ECI_GENERAL_PURPOSE:
@@ -175,7 +175,7 @@ export default /*final*/ class DecodedBitStreamParser {
         if (result.length() === 0) {
             throw FormatException.getFormatInstance();
         }
-        let decoderResult = new DecoderResult(null, result.toString(), null, ecLevel);
+        const decoderResult = new DecoderResult(null, result.toString(), null, ecLevel);
         decoderResult.setOther(resultMetadata);
         return decoderResult;
     }
@@ -197,12 +197,12 @@ export default /*final*/ class DecodedBitStreamParser {
             // we must have at least two bytes left for the segment index
             throw FormatException.getFormatInstance();
         }
-        let segmentIndexArray = new Int32Array(DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS);
+        const segmentIndexArray = new Int32Array(DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS);
         for (let i /*int*/ = 0; i < DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS; i++, codeIndex++) {
             segmentIndexArray[i] = codewords[codeIndex];
         }
         resultMetadata.setSegmentIndex(Integer.parseInt(DecodedBitStreamParser.decodeBase900toBase10(segmentIndexArray, DecodedBitStreamParser.NUMBER_OF_SEQUENCE_CODEWORDS)));
-        let fileId = new StringBuilder();
+        const fileId = new StringBuilder();
         codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex, fileId);
         resultMetadata.setFileId(fileId.toString());
         let optionalFieldsStart = -1;
@@ -215,37 +215,37 @@ export default /*final*/ class DecodedBitStreamParser {
                     codeIndex++;
                     switch (codewords[codeIndex]) {
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_NAME:
-                            let fileName = new StringBuilder();
+                            const fileName = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, fileName);
                             resultMetadata.setFileName(fileName.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SENDER:
-                            let sender = new StringBuilder();
+                            const sender = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, sender);
                             resultMetadata.setSender(sender.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_ADDRESSEE:
-                            let addressee = new StringBuilder();
+                            const addressee = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.textCompaction(codewords, codeIndex + 1, addressee);
                             resultMetadata.setAddressee(addressee.toString());
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_SEGMENT_COUNT:
-                            let segmentCount = new StringBuilder();
+                            const segmentCount = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, segmentCount);
                             resultMetadata.setSegmentCount(Integer.parseInt(segmentCount.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_TIME_STAMP:
-                            let timestamp = new StringBuilder();
+                            const timestamp = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, timestamp);
                             resultMetadata.setTimestamp(Long.parseLong(timestamp.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_CHECKSUM:
-                            let checksum = new StringBuilder();
+                            const checksum = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, checksum);
                             resultMetadata.setChecksum(Integer.parseInt(checksum.toString()));
                             break;
                         case DecodedBitStreamParser.MACRO_PDF417_OPTIONAL_FIELD_FILE_SIZE:
-                            let fileSize = new StringBuilder();
+                            const fileSize = new StringBuilder();
                             codeIndex = DecodedBitStreamParser.numericCompaction(codewords, codeIndex + 1, fileSize);
                             resultMetadata.setFileSize(Long.parseLong(fileSize.toString()));
                             break;
@@ -284,9 +284,9 @@ export default /*final*/ class DecodedBitStreamParser {
      */
     static textCompaction(codewords, codeIndex, result) {
         // 2 character per codeword
-        let textCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
+        const textCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
         // Used to hold the byte compaction value if there is a mode shift
-        let byteCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
+        const byteCompactionData = new Int32Array((codewords[0] - codeIndex) * 2);
         let index = 0;
         let end = false;
         while ((codeIndex < codewords[0]) && !end) {
@@ -354,7 +354,7 @@ export default /*final*/ class DecodedBitStreamParser {
         let priorToShiftMode = Mode.ALPHA;
         let i = 0;
         while (i < length) {
-            let subModeCh = textCompactionData[i];
+            const subModeCh = textCompactionData[i];
             let ch = /*char*/ '';
             switch (subMode) {
                 case Mode.ALPHA:
@@ -535,7 +535,7 @@ export default /*final*/ class DecodedBitStreamParser {
      * @return The next index into the codeword array.
      */
     static /*int*/ byteCompaction(mode, codewords, encoding, codeIndex, result) {
-        let decodedBytes = new ByteArrayOutputStream();
+        const decodedBytes = new ByteArrayOutputStream();
         let count = 0;
         let value = /*long*/ 0;
         let end = false;
@@ -543,7 +543,7 @@ export default /*final*/ class DecodedBitStreamParser {
             case DecodedBitStreamParser.BYTE_COMPACTION_MODE_LATCH:
                 // Total number of Byte Compaction characters to be encoded
                 // is not a multiple of 6
-                let byteCompactedCodewords = new Int32Array(6);
+                const byteCompactedCodewords = new Int32Array(6);
                 let nextCode = codewords[codeIndex++];
                 while ((codeIndex < codewords[0]) && !end) {
                     byteCompactedCodewords[count++] = nextCode;
@@ -594,7 +594,7 @@ export default /*final*/ class DecodedBitStreamParser {
                 // Total number of Byte Compaction characters to be encoded
                 // is an integer multiple of 6
                 while (codeIndex < codewords[0] && !end) {
-                    let code = codewords[codeIndex++];
+                    const code = codewords[codeIndex++];
                     if (code < DecodedBitStreamParser.TEXT_COMPACTION_MODE_LATCH) {
                         count++;
                         // Base 900
@@ -646,9 +646,9 @@ export default /*final*/ class DecodedBitStreamParser {
     static numericCompaction(codewords, codeIndex /*int*/, result) {
         let count = 0;
         let end = false;
-        let numericCodewords = new Int32Array(DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS);
+        const numericCodewords = new Int32Array(DecodedBitStreamParser.MAX_NUMERIC_CODEWORDS);
         while (codeIndex < codewords[0] && !end) {
-            let code = codewords[codeIndex++];
+            const code = codewords[codeIndex++];
             if (codeIndex === codewords[0]) {
                 end = true;
             }
@@ -729,7 +729,7 @@ export default /*final*/ class DecodedBitStreamParser {
         for (let i /*int*/ = 0; i < count; i++) {
             result += DecodedBitStreamParser.EXP900[count - i - 1] * createBigInt(codewords[i]);
         }
-        let resultString = result.toString();
+        const resultString = result.toString();
         if (resultString.charAt(0) !== '1') {
             throw new FormatException();
         }

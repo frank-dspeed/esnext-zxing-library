@@ -122,9 +122,9 @@ export default class RSSExpandedReader extends AbstractRSSReader {
     // Recursion is used to implement backtracking
     checkRows(collectedRows, currentRow) {
         for (let i = currentRow; i < this.rows.length; i++) {
-            let row = this.rows[i];
+            const row = this.rows[i];
             this.pairs.length = 0;
-            for (let collectedRow of collectedRows) {
+            for (const collectedRow of collectedRows) {
                 this.pairs.push(collectedRow.getPairs());
             }
             this.pairs.push(row.getPairs());
@@ -134,7 +134,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
             if (this.checkChecksum()) {
                 return this.pairs;
             }
-            let rs = new Array(collectedRows);
+            const rs = new Array(collectedRows);
             rs.push(row);
             try {
                 // Recursion: try to add more rows
@@ -150,7 +150,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
     // Whether the pairs form a valid find pattern sequence,
     // either complete or a prefix
     static isValidSequence(pairs) {
-        for (let sequence of RSSExpandedReader.FINDER_PATTERN_SEQUENCES) {
+        for (const sequence of RSSExpandedReader.FINDER_PATTERN_SEQUENCES) {
             if (pairs.length > sequence.length) {
                 continue;
             }
@@ -173,7 +173,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         let prevIsSame = false;
         let nextIsSame = false;
         while (insertPos < this.rows.length) {
-            let erow = this.rows[insertPos];
+            const erow = this.rows[insertPos];
             if (erow.getRowNumber() > rowNumber) {
                 nextIsSame = erow.isEquivalent(this.pairs);
                 break;
@@ -220,14 +220,14 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         //     iterator.remove();
         //   }
         // }
-        for (let row of rows) {
+        for (const row of rows) {
             if (row.getPairs().length === pairs.length) {
                 continue;
             }
             let allFound = true;
-            for (let p of row.getPairs()) {
+            for (const p of row.getPairs()) {
                 let found = false;
-                for (let pp of pairs) {
+                for (const pp of pairs) {
                     if (ExpandedPair.equals(p, pp)) {
                         found = true;
                         break;
@@ -241,11 +241,11 @@ export default class RSSExpandedReader extends AbstractRSSReader {
     }
     // Returns true when one of the rows already contains all the pairs
     static isPartialRow(pairs, rows) {
-        for (let r of rows) {
+        for (const r of rows) {
             let allFound = true;
-            for (let p of pairs) {
+            for (const p of pairs) {
                 let found = false;
-                for (let pp of r.getPairs()) {
+                for (const pp of r.getPairs()) {
                     if (p.equals(pp)) {
                         found = true;
                         break;
@@ -269,35 +269,35 @@ export default class RSSExpandedReader extends AbstractRSSReader {
     }
     // Not private for unit testing
     static constructResult(pairs) {
-        let binary = BitArrayBuilder.buildBitArray(pairs);
-        let decoder = createDecoder(binary);
-        let resultingString = decoder.parseInformation();
-        let firstPoints = pairs[0].getFinderPattern().getResultPoints();
-        let lastPoints = pairs[pairs.length - 1].getFinderPattern().getResultPoints();
-        let points = [firstPoints[0], firstPoints[1], lastPoints[0], lastPoints[1]];
+        const binary = BitArrayBuilder.buildBitArray(pairs);
+        const decoder = createDecoder(binary);
+        const resultingString = decoder.parseInformation();
+        const firstPoints = pairs[0].getFinderPattern().getResultPoints();
+        const lastPoints = pairs[pairs.length - 1].getFinderPattern().getResultPoints();
+        const points = [firstPoints[0], firstPoints[1], lastPoints[0], lastPoints[1]];
         return new Result(resultingString, null, null, points, BarcodeFormat.RSS_EXPANDED, null);
     }
     checkChecksum() {
-        let firstPair = this.pairs.get(0);
-        let checkCharacter = firstPair.getLeftChar();
-        let firstCharacter = firstPair.getRightChar();
+        const firstPair = this.pairs.get(0);
+        const checkCharacter = firstPair.getLeftChar();
+        const firstCharacter = firstPair.getRightChar();
         if (firstCharacter == null) {
             return false;
         }
         let checksum = firstCharacter.getChecksumPortion();
         let s = 2;
         for (let i = 1; i < this.pairs.size(); ++i) {
-            let currentPair = this.pairs.get(i);
+            const currentPair = this.pairs.get(i);
             checksum += currentPair.getLeftChar().getChecksumPortion();
             s++;
-            let currentRightChar = currentPair.getRightChar();
+            const currentRightChar = currentPair.getRightChar();
             if (currentRightChar != null) {
                 checksum += currentRightChar.getChecksumPortion();
                 s++;
             }
         }
         checksum %= 211;
-        let checkCharacterValue = 211 * (s - 4) + checksum;
+        const checkCharacterValue = 211 * (s - 4) + checksum;
         return checkCharacterValue == checkCharacter.getValue();
     }
     static getNextSecondBar(row, initialPos) {
@@ -333,7 +333,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         } while (keepFinding);
         // When stacked symbol is split over multiple rows, there's no way to guess if this pair can be last or not.
         // boolean mayBeLast = checkPairSequence(previousPairs, pattern);
-        let leftChar = this.decodeDataCharacter(row, pattern, isOddPattern, true);
+        const leftChar = this.decodeDataCharacter(row, pattern, isOddPattern, true);
         if (!this.isEmptyPair(previousPairs) && previousPairs[previousPairs.length - 1].mustBeLast()) {
             throw new NotFoundException();
         }
@@ -354,12 +354,12 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         return false;
     }
     findNextPair(row, previousPairs, forcedOffset) {
-        let counters = this.getDecodeFinderCounters();
+        const counters = this.getDecodeFinderCounters();
         counters[0] = 0;
         counters[1] = 0;
         counters[2] = 0;
         counters[3] = 0;
-        let width = row.getSize();
+        const width = row.getSize();
         let rowOffset;
         if (forcedOffset >= 0) {
             rowOffset = forcedOffset;
@@ -368,7 +368,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
             rowOffset = 0;
         }
         else {
-            let lastPair = previousPairs[previousPairs.length - 1];
+            const lastPair = previousPairs[previousPairs.length - 1];
             rowOffset = lastPair.getFinderPattern().getStartEnd()[1];
         }
         let searchingEvenPair = previousPairs.length % 2 != 0;
@@ -419,9 +419,9 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         throw new NotFoundException();
     }
     static reverseCounters(counters) {
-        let length = counters.length;
+        const length = counters.length;
         for (let i = 0; i < length / 2; ++i) {
-            let tmp = counters[i];
+            const tmp = counters[i];
             counters[i] = counters[length - i - 1];
             counters[length - i - 1] = tmp;
         }
@@ -450,7 +450,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
             firstCounter = end - this.startEnd[1];
         }
         // Make 'counters' hold 1-4
-        let counters = this.getDecodeFinderCounters();
+        const counters = this.getDecodeFinderCounters();
         System.arraycopy(counters, 0, counters, 1, counters.length - 1);
         counters[0] = firstCounter;
         let value;
@@ -465,7 +465,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         return new FinderPattern(value, [start, end], start, end, rowNumber);
     }
     decodeDataCharacter(row, pattern, isOddPattern, leftChar) {
-        let counters = this.getDataCharacterCounters();
+        const counters = this.getDataCharacterCounters();
         for (let x = 0; x < counters.length; x++) {
             counters[x] = 0;
         }
@@ -476,24 +476,24 @@ export default class RSSExpandedReader extends AbstractRSSReader {
             RSSExpandedReader.recordPattern(row, pattern.getStartEnd()[1], counters);
             // reverse it
             for (let i = 0, j = counters.length - 1; i < j; i++, j--) {
-                let temp = counters[i];
+                const temp = counters[i];
                 counters[i] = counters[j];
                 counters[j] = temp;
             }
         } // counters[] has the pixels of the module
-        let numModules = 17; // left and right data characters have all the same length
-        let elementWidth = MathUtils.sum(new Int32Array(counters)) / numModules;
+        const numModules = 17; // left and right data characters have all the same length
+        const elementWidth = MathUtils.sum(new Int32Array(counters)) / numModules;
         // Sanity check: element width for pattern and the character should match
-        let expectedElementWidth = (pattern.getStartEnd()[1] - pattern.getStartEnd()[0]) / 15.0;
+        const expectedElementWidth = (pattern.getStartEnd()[1] - pattern.getStartEnd()[0]) / 15.0;
         if (Math.abs(elementWidth - expectedElementWidth) / expectedElementWidth > 0.3) {
             throw new NotFoundException();
         }
-        let oddCounts = this.getOddCounts();
-        let evenCounts = this.getEvenCounts();
-        let oddRoundingErrors = this.getOddRoundingErrors();
-        let evenRoundingErrors = this.getEvenRoundingErrors();
+        const oddCounts = this.getOddCounts();
+        const evenCounts = this.getEvenCounts();
+        const oddRoundingErrors = this.getOddRoundingErrors();
+        const evenRoundingErrors = this.getEvenRoundingErrors();
         for (let i = 0; i < counters.length; i++) {
-            let value = 1.0 * counters[i] / elementWidth;
+            const value = 1.0 * counters[i] / elementWidth;
             let count = value + 0.5; // Round
             if (count < 1) {
                 if (value < 0.3) {
@@ -507,7 +507,7 @@ export default class RSSExpandedReader extends AbstractRSSReader {
                 }
                 count = 8;
             }
-            let offset = i / 2;
+            const offset = i / 2;
             if ((i & 0x01) == 0) {
                 oddCounts[offset] = count;
                 oddRoundingErrors[offset] = value - count;
@@ -518,12 +518,12 @@ export default class RSSExpandedReader extends AbstractRSSReader {
             }
         }
         this.adjustOddEvenCounts(numModules);
-        let weightRowNumber = 4 * pattern.getValue() + (isOddPattern ? 0 : 2) + (leftChar ? 0 : 1) - 1;
+        const weightRowNumber = 4 * pattern.getValue() + (isOddPattern ? 0 : 2) + (leftChar ? 0 : 1) - 1;
         let oddSum = 0;
         let oddChecksumPortion = 0;
         for (let i = oddCounts.length - 1; i >= 0; i--) {
             if (RSSExpandedReader.isNotA1left(pattern, isOddPattern, leftChar)) {
-                let weight = RSSExpandedReader.WEIGHTS[weightRowNumber][2 * i];
+                const weight = RSSExpandedReader.WEIGHTS[weightRowNumber][2 * i];
                 oddChecksumPortion += oddCounts[i] * weight;
             }
             oddSum += oddCounts[i];
@@ -532,23 +532,23 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         // int evenSum = 0;
         for (let i = evenCounts.length - 1; i >= 0; i--) {
             if (RSSExpandedReader.isNotA1left(pattern, isOddPattern, leftChar)) {
-                let weight = RSSExpandedReader.WEIGHTS[weightRowNumber][2 * i + 1];
+                const weight = RSSExpandedReader.WEIGHTS[weightRowNumber][2 * i + 1];
                 evenChecksumPortion += evenCounts[i] * weight;
             }
             // evenSum += evenCounts[i];
         }
-        let checksumPortion = oddChecksumPortion + evenChecksumPortion;
+        const checksumPortion = oddChecksumPortion + evenChecksumPortion;
         if ((oddSum & 0x01) != 0 || oddSum > 13 || oddSum < 4) {
             throw new NotFoundException();
         }
-        let group = (13 - oddSum) / 2;
-        let oddWidest = RSSExpandedReader.SYMBOL_WIDEST[group];
-        let evenWidest = 9 - oddWidest;
-        let vOdd = RSSUtils.getRSSvalue(oddCounts, oddWidest, true);
-        let vEven = RSSUtils.getRSSvalue(evenCounts, evenWidest, false);
-        let tEven = RSSExpandedReader.EVEN_TOTAL_SUBSET[group];
-        let gSum = RSSExpandedReader.GSUM[group];
-        let value = vOdd * tEven + vEven + gSum;
+        const group = (13 - oddSum) / 2;
+        const oddWidest = RSSExpandedReader.SYMBOL_WIDEST[group];
+        const evenWidest = 9 - oddWidest;
+        const vOdd = RSSUtils.getRSSvalue(oddCounts, oddWidest, true);
+        const vEven = RSSUtils.getRSSvalue(evenCounts, evenWidest, false);
+        const tEven = RSSExpandedReader.EVEN_TOTAL_SUBSET[group];
+        const gSum = RSSExpandedReader.GSUM[group];
+        const value = vOdd * tEven + vEven + gSum;
         return new DataCharacter(value, checksumPortion);
     }
     static isNotA1left(pattern, isOddPattern, leftChar) {
@@ -556,8 +556,8 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         return !(pattern.getValue() == 0 && isOddPattern && leftChar);
     }
     adjustOddEvenCounts(numModules) {
-        let oddSum = MathUtils.sum(new Int32Array(this.getOddCounts()));
-        let evenSum = MathUtils.sum(new Int32Array(this.getEvenCounts()));
+        const oddSum = MathUtils.sum(new Int32Array(this.getOddCounts()));
+        const evenSum = MathUtils.sum(new Int32Array(this.getEvenCounts()));
         let incrementOdd = false;
         let decrementOdd = false;
         if (oddSum > 13) {
@@ -574,9 +574,9 @@ export default class RSSExpandedReader extends AbstractRSSReader {
         else if (evenSum < 4) {
             incrementEven = true;
         }
-        let mismatch = oddSum + evenSum - numModules;
-        let oddParityBad = (oddSum & 0x01) == 1;
-        let evenParityBad = (evenSum & 0x01) == 0;
+        const mismatch = oddSum + evenSum - numModules;
+        const oddParityBad = (oddSum & 0x01) == 1;
+        const evenParityBad = (evenSum & 0x01) == 0;
         if (mismatch == 1) {
             if (oddParityBad) {
                 if (evenParityBad) {

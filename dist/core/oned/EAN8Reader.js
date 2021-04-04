@@ -31,21 +31,21 @@ export default class EAN8Reader extends UPCEANReader {
         counters[1] = 0;
         counters[2] = 0;
         counters[3] = 0;
-        let end = row.getSize();
+        const end = row.getSize();
         let rowOffset = startRange[1];
         for (let x = 0; x < 4 && rowOffset < end; x++) {
-            let bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
+            const bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
             resultString += String.fromCharCode(('0'.charCodeAt(0) + bestMatch));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
         }
-        let middleRange = UPCEANReader.findGuardPattern(row, rowOffset, true, UPCEANReader.MIDDLE_PATTERN, new Int32Array(UPCEANReader.MIDDLE_PATTERN.length).fill(0));
+        const middleRange = UPCEANReader.findGuardPattern(row, rowOffset, true, UPCEANReader.MIDDLE_PATTERN, new Int32Array(UPCEANReader.MIDDLE_PATTERN.length).fill(0));
         rowOffset = middleRange[1];
         for (let x = 0; x < 4 && rowOffset < end; x++) {
-            let bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
+            const bestMatch = UPCEANReader.decodeDigit(row, counters, rowOffset, UPCEANReader.L_PATTERNS);
             resultString += String.fromCharCode(('0'.charCodeAt(0) + bestMatch));
-            for (let counter of counters) {
+            for (const counter of counters) {
                 rowOffset += counter;
             }
         }
