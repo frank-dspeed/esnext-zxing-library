@@ -57,7 +57,7 @@ jobs:
           ls -ahl ../dist
           yarn upgrade eslint@latest --latest
           cd ..
-          ./library/node_modules/.bin/eslint --config ./.eslintrc.json --fix dist
+          ./library/node_modules/.bin/eslint --config ./.eslintrc.json --fix dist || echo "done"
           git add dist
           git commit -m "Updated /dist $MASTER_COMMIT" || exit 0
           ## Lets Exit for first test
