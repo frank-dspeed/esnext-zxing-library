@@ -55,6 +55,7 @@ jobs:
           rm -rf ../dist
           mv dist/esnext ../dist
           ls -ahl ../dist
+          yarn upgrade eslint@latest --latest
           cd ..
           ./library/node_modules/.bin/eslint --config ./.eslintrc.json --fix dist
           git add dist
